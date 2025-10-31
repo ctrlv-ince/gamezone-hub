@@ -1,0 +1,252 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Card,
+  Alert,
+  CircularProgress,
+  InputAdornment,
+  IconButton
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { toast } from 'react-toastify';
+import { useAuth } from '../hooks/useAuth';
+import { validateLoginForm, hasErrors } from '../utils/validation';
+
+const Login = () => {
+  const navigate = useNavigate();
+  const { login, loading, error, clearError, isLoggedIn } = useAuth();
+
+  // Form state
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate('/');
+    }
+  }, [isLoggedIn, navigate]);
+
+  // Clear error when component unmounts or error changes
+  useEffect(() => {
+    return () => clearError();
+  }, [clearError]);
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    // Clear field error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  // Toggle password visibility
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Clear previous errors
+    setFormErrors({});
+    clearError();
+
+    // Validate form
+    const errors = validateLoginForm(formData.email, formData.password);
+
+    if (hasErrors(errors)) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const result = await login(formData.email, formData.password);
+
+      if (result.success) {
+        toast.success('Login successful! Redirecting...');
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      } else {
+        toast.error(result.message || 'Login failed');
+      }
+    } catch (err) {
+      toast.error(err.message || 'Login failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          py: 4
+        }}
+      >
+        <Card
+          sx={{
+            p: 4,
+            boxShadow: 3,
+            borderRadius: 2
+          }}
+        >
+          {/* Header */}
+          <Box sx={{ mb: 3, textAlign: 'center' }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                fontWeight: 'bold',
+                color: 'primary.main',
+                mb: 1
+              }}
+            >
+              Welcome Back
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Sign in to GameZone Hub
+            </Typography>
+          </Box>
+
+          {/* Error Alert */}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }} onClose={clearError}>
+              {error}
+            </Alert>
+          )}
+
+          {/* Login Form */}
+          <Box component="form" onSubmit={handleSubmit} noValidate>
+            {/* Email Field */}
+            <TextField
+              fullWidth
+              label="Email Address"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!formErrors.email}
+              helperText={formErrors.email}
+              margin="normal"
+              placeholder="Enter your email"
+              disabled={submitting || loading}
+              autoFocus
+            />
+
+            {/* Password Field */}
+            <TextField
+              fullWidth
+              label="Password"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.password}
+              onChange={handleChange}
+              error={!!formErrors.password}
+              helperText={formErrors.password}
+              margin="normal"
+              placeholder="Enter your password"
+              disabled={submitting || loading}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleTogglePassword}
+                      edge="end"
+                      disabled={submitting || loading}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+
+            {/* Submit Button */}
+            <Button
+              fullWidth
+              type="submit"
+              variant="contained"
+              size="large"
+              sx={{
+                mt: 3,
+                py: 1.5,
+                fontWeight: 'bold',
+                fontSize: '1rem'
+              }}
+              disabled={submitting || loading}
+            >
+              {submitting || loading ? (
+                <>
+                  <CircularProgress size={20} sx={{ mr: 1 }} />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+          </Box>
+
+          {/* Footer */}
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+              <Link
+                to="/forgot-password"
+                style={{
+                  color: '#1976d2',
+                  textDecoration: 'none',
+                  fontWeight: 'bold'
+                }}
+              >
+                Forgot your password?
+              </Link>
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+              Don&apos;t have an account?{' '}
+              <Link
+                to="/register"
+                style={{
+                  color: '#1976d2',
+                  textDecoration: 'none',
+                  fontWeight: 'bold'
+                }}
+              >
+                Create one now
+              </Link>
+            </Typography>
+          </Box>
+        </Card>
+      </Box>
+    </Container>
+  );
+};
+
+export default Login;
