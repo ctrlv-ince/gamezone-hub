@@ -27,6 +27,10 @@ yarn-debug.log*
 yarn-error.log*
 
 ENV_SETUP.md
+AVATAR_UPLOAD.md
+BUILD_SUMMARY.txt
+IMPLEMENTATION_SUMMARY.md
+QUICK_START.md
 
 .vscode/*
 
