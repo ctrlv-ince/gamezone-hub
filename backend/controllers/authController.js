@@ -6,10 +6,10 @@ const fs = require('fs');
 // Register user
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword, address, contactNumber } = req.body;
 
     // Validation
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword || !address || !contactNumber) {
       return res.status(400).json({
         success: false,
         message: 'Please provide all required fields'
@@ -76,11 +76,13 @@ exports.registerUser = async (req, res) => {
       }
     }
 
-    // Create user with avatar
+    // Create user with avatar, address, and contact number
     user = await User.create({
       name,
       email,
       password,
+      address,
+      contactNumber,
       avatar
     });
 
@@ -94,7 +96,10 @@ exports.registerUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        address: user.address,
+        contactNumber: user.contactNumber,
+        role: user.role,
+        avatar: user.avatar
       }
     });
   } catch (error) {
@@ -148,6 +153,8 @@ exports.loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        address: user.address,
+        contactNumber: user.contactNumber,
         role: user.role,
         avatar: user.avatar
       }
@@ -171,6 +178,8 @@ exports.getCurrentUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        address: user.address,
+        contactNumber: user.contactNumber,
         role: user.role,
         avatar: user.avatar
       }
@@ -246,6 +255,8 @@ exports.updateAvatar = async (req, res) => {
           id: user._id,
           name: user.name,
           email: user.email,
+          address: user.address,
+          contactNumber: user.contactNumber,
           role: user.role,
           avatar: user.avatar
         }

@@ -29,7 +29,9 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    address: '',
+    contactNumber: ''
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
@@ -119,7 +121,9 @@ const Register = () => {
       formData.name,
       formData.email,
       formData.password,
-      formData.confirmPassword
+      formData.confirmPassword,
+      formData.address,
+      formData.contactNumber
     );
 
     if (hasErrors(errors)) {
@@ -135,6 +139,8 @@ const Register = () => {
         formData.email,
         formData.password,
         formData.confirmPassword,
+        formData.address,
+        formData.contactNumber,
         avatarFile
       );
 
@@ -167,8 +173,10 @@ const Register = () => {
         <Card
           sx={{
             p: 4,
-            boxShadow: 3,
-            borderRadius: 2
+            boxShadow: '0 0 30px rgba(0,255,136,0.2), 0 10px 40px rgba(0,0,0,0.5)',
+            borderRadius: 2,
+            backgroundColor: 'rgba(26, 31, 58, 0.9)',
+            border: '1px solid rgba(0,255,136,0.3)',
           }}
         >
           {/* Header */}
@@ -178,13 +186,16 @@ const Register = () => {
               component="h1"
               sx={{
                 fontWeight: 'bold',
-                color: 'primary.main',
+                background: 'linear-gradient(135deg, rgb(100, 160, 190) 0%, rgb(60, 120, 150) 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 mb: 1
               }}
             >
               Create Account
             </Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" sx={{ color: '#a0a0a0' }}>
               Join GameZone Hub today
             </Typography>
           </Box>
@@ -198,7 +209,7 @@ const Register = () => {
 
           {/* Avatar Upload Section */}
           <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#fff' }}>
               Profile Picture (Optional)
             </Typography>
             <Box
@@ -206,25 +217,26 @@ const Register = () => {
               sx={{
                 width: 120,
                 height: 120,
-                border: '2px dashed #1976d2',
+                border: '2px dashed #00d4ff',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                backgroundColor: avatarPreview ? 'transparent' : '#f5f5f5',
+                backgroundColor: avatarPreview ? 'transparent' : 'rgba(10, 14, 39, 0.5)',
                 backgroundImage: avatarPreview ? `url(${avatarPreview})` : 'none',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  borderColor: '#1565c0',
-                  backgroundColor: avatarPreview ? 'transparent' : '#eeeeee'
+                  borderColor: '#00ff88',
+                  backgroundColor: avatarPreview ? 'transparent' : 'rgba(10, 14, 39, 0.7)',
+                  boxShadow: '0 0 15px rgba(0,212,255,0.3)'
                 }
               }}
             >
               {!avatarPreview && (
-                <Typography variant="caption" sx={{ textAlign: 'center', color: '#666' }}>
+                <Typography variant="caption" sx={{ textAlign: 'center', color: '#a0a0a0' }}>
                   Click to upload
                 </Typography>
               )}
@@ -237,12 +249,12 @@ const Register = () => {
               style={{ display: 'none' }}
               disabled={submitting || loading}
             />
-            <Typography variant="caption" color="textSecondary">
+            <Typography variant="caption" sx={{ color: '#a0a0a0' }}>
               JPG, PNG, GIF, or WebP • Max 5MB
             </Typography>
           </Box>
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 2, borderColor: 'rgba(0,255,136,0.2)' }} />
 
           {/* Registration Form */}
           <Box component="form" onSubmit={handleSubmit} noValidate>
@@ -260,6 +272,25 @@ const Register = () => {
               placeholder="Enter your full name"
               disabled={submitting || loading}
               autoFocus
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
             />
 
             {/* Email Field */}
@@ -275,6 +306,25 @@ const Register = () => {
               margin="normal"
               placeholder="Enter your email"
               disabled={submitting || loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
             />
 
             {/* Password Field */}
@@ -290,6 +340,25 @@ const Register = () => {
               margin="normal"
               placeholder="Enter your password"
               disabled={submitting || loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -297,6 +366,7 @@ const Register = () => {
                       onClick={handleTogglePassword}
                       edge="end"
                       disabled={submitting || loading}
+                      sx={{ color: '#b0b0b0' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -318,6 +388,25 @@ const Register = () => {
               margin="normal"
               placeholder="Confirm your password"
               disabled={submitting || loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -325,11 +414,82 @@ const Register = () => {
                       onClick={handleToggleConfirmPassword}
                       edge="end"
                       disabled={submitting || loading}
+                      sx={{ color: '#b0b0b0' }}
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
                 )
+              }}
+            />
+
+            {/* Address Field */}
+            <TextField
+              fullWidth
+              label="Address"
+              name="address"
+              type="text"
+              value={formData.address}
+              onChange={handleChange}
+              error={!!formErrors.address}
+              helperText={formErrors.address}
+              margin="normal"
+              placeholder="Enter your full address"
+              disabled={submitting || loading}
+              multiline
+              rows={2}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
+            />
+
+            {/* Contact Number Field */}
+            <TextField
+              fullWidth
+              label="Contact Number"
+              name="contactNumber"
+              type="tel"
+              value={formData.contactNumber}
+              onChange={handleChange}
+              error={!!formErrors.contactNumber}
+              helperText={formErrors.contactNumber}
+              margin="normal"
+              placeholder="Enter your contact number (e.g., +1234567890)"
+              disabled={submitting || loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
               }}
             />
 
@@ -360,15 +520,18 @@ const Register = () => {
 
           {/* Footer */}
           <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" sx={{ color: '#a0a0a0' }}>
               Already have an account?{' '}
               <Link
                 to="/login"
                 style={{
-                  color: '#1976d2',
+                  color: '#00d4ff',
                   textDecoration: 'none',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
                 }}
+                onMouseEnter={(e) => e.target.style.textShadow = '0 0 10px rgba(0,212,255,0.5)'}
+                onMouseLeave={(e) => e.target.style.textShadow = 'none'}
               >
                 Login here
               </Link>

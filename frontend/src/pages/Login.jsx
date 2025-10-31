@@ -115,8 +115,10 @@ const Login = () => {
         <Card
           sx={{
             p: 4,
-            boxShadow: 3,
-            borderRadius: 2
+            boxShadow: '0 0 30px rgba(0,255,136,0.2), 0 10px 40px rgba(0,0,0,0.5)',
+            borderRadius: 2,
+            backgroundColor: 'rgba(26, 31, 58, 0.9)',
+            border: '1px solid rgba(0,255,136,0.3)',
           }}
         >
           {/* Header */}
@@ -126,13 +128,16 @@ const Login = () => {
               component="h1"
               sx={{
                 fontWeight: 'bold',
-                color: 'primary.main',
+                background: 'linear-gradient(135deg, rgb(100, 160, 190) 0%, rgb(60, 120, 150) 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 mb: 1
               }}
             >
               Welcome Back
             </Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body2" sx={{ color: '#a0a0a0' }}>
               Sign in to GameZone Hub
             </Typography>
           </Box>
@@ -160,6 +165,29 @@ const Login = () => {
               placeholder="Enter your email"
               disabled={submitting || loading}
               autoFocus
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: '#707070',
+                  opacity: 1,
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
             />
 
             {/* Password Field */}
@@ -175,6 +203,29 @@ const Login = () => {
               margin="normal"
               placeholder="Enter your password"
               disabled={submitting || loading}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  color: '#b0b0b0',
+                  backgroundColor: 'rgba(10, 14, 39, 0.5)',
+                  '& fieldset': {
+                    borderColor: 'rgba(0,255,136,0.2)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(0,255,136,0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#00d4ff',
+                    boxShadow: '0 0 10px rgba(0,212,255,0.3)',
+                  },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: '#707070',
+                  opacity: 1,
+                },
+                '& .MuiInputLabel-root': {
+                  color: '#a0a0a0',
+                },
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -182,6 +233,7 @@ const Login = () => {
                       onClick={handleTogglePassword}
                       edge="end"
                       disabled={submitting || loading}
+                      sx={{ color: '#b0b0b0' }}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -217,27 +269,33 @@ const Login = () => {
 
           {/* Footer */}
           <Box sx={{ mt: 3 }}>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 1 }}>
+            <Typography variant="body2" sx={{ mb: 1, color: '#a0a0a0' }}>
               <Link
                 to="/forgot-password"
                 style={{
-                  color: '#1976d2',
+                  color: '#00d4ff',
                   textDecoration: 'none',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
                 }}
+                onMouseEnter={(e) => e.target.style.textShadow = '0 0 10px rgba(0,212,255,0.5)'}
+                onMouseLeave={(e) => e.target.style.textShadow = 'none'}
               >
                 Forgot your password?
               </Link>
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ textAlign: 'center', color: '#a0a0a0' }}>
               Don&apos;t have an account?{' '}
               <Link
                 to="/register"
                 style={{
-                  color: '#1976d2',
+                  color: '#00ff88',
                   textDecoration: 'none',
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  transition: 'all 0.3s ease',
                 }}
+                onMouseEnter={(e) => e.target.style.textShadow = '0 0 10px rgba(0,255,136,0.5)'}
+                onMouseLeave={(e) => e.target.style.textShadow = 'none'}
               >
                 Create one now
               </Link>

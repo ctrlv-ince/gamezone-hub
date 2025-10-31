@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     },
+    address: {
+        type: String,
+        required: [true, 'Please enter your address']
+    },
+    contactNumber: {
+        type: String,
+        required: [true, 'Please enter your contact number']
+    },
     role: {
         type: String,
         default: 'user'

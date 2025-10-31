@@ -4,13 +4,15 @@ const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/auth`;
 
 const authService = {
   // Register user
-  register: async (name, email, password, confirmPassword, avatarFile = null) => {
+  register: async (name, email, password, confirmPassword, address, contactNumber, avatarFile = null) => {
     try {
       const formData = new FormData();
       formData.append('name', name);
       formData.append('email', email);
       formData.append('password', password);
       formData.append('confirmPassword', confirmPassword);
+      formData.append('address', address);
+      formData.append('contactNumber', contactNumber);
 
       if (avatarFile) {
         formData.append('avatar', avatarFile);

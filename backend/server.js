@@ -1,8 +1,3 @@
-// ============================================================================
-// BACKEND SERVER - GameZone Hub
-// Copy this template and create 'server.js' when ready
-// ============================================================================
-
 require('dotenv').config(); // Load environment variables
 const express = require('express');
 const cors = require('cors');

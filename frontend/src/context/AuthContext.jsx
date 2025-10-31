@@ -9,26 +9,45 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Initialize auth state from localStorage
+  // Initialize auth state from localStorage and fetch fresh user data
   useEffect(() => {
-    const storedToken = authService.getToken();
-    const storedUser = authService.getUser();
+    const initAuth = async () => {
+      const storedToken = authService.getToken();
+      const storedUser = authService.getUser();
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(storedUser);
-    }
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        
+        // Fetch fresh user data from API to ensure avatar is up-to-date
+        try {
+          const response = await authService.getCurrentUser(storedToken);
+          if (response.success && response.user) {
+            setUser(response.user);
+            // Update localStorage with fresh data
+            localStorage.setItem('user', JSON.stringify(response.user));
+          } else {
+            setUser(storedUser);
+          }
+        } catch (err) {
+          console.error('Error fetching user:', err);
+          // Fallback to stored user if API fails
+          setUser(storedUser);
+        }
+      }
 
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   // Register user
-  const register = useCallback(async (name, email, password, confirmPassword, avatarFile = null) => {
+  const register = useCallback(async (name, email, password, confirmPassword, address, contactNumber, avatarFile = null) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await authService.register(name, email, password, confirmPassword, avatarFile);
+      const response = await authService.register(name, email, password, confirmPassword, address, contactNumber, avatarFile);
 
       if (response.success) {
         setToken(response.token);
