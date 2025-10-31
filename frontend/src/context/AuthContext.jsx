@@ -23,12 +23,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Register user
-  const register = useCallback(async (name, email, password, confirmPassword) => {
+  const register = useCallback(async (name, email, password, confirmPassword, avatarFile = null) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await authService.register(name, email, password, confirmPassword);
+      const response = await authService.register(name, email, password, confirmPassword, avatarFile);
 
       if (response.success) {
         setToken(response.token);

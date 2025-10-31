@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Container,
@@ -10,16 +10,19 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
-  IconButton
+  IconButton,
+  Divider
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import { useAuth } from '../hooks/useAuth';
 import { validateRegisterForm, hasErrors } from '../utils/validation';
+import AvatarUpload from '../components/AvatarUpload';
 
 const Register = () => {
   const navigate = useNavigate();
   const { register, loading, error, clearError, isLoggedIn } = useAuth();
+  const fileInputRef = useRef(null);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -29,6 +32,8 @@ const Register = () => {
     confirmPassword: ''
   });
 
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -72,6 +77,35 @@ const Register = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  // Handle avatar file selection
+  const handleAvatarSelect = (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size must not exceed 5MB');
+      return;
+    }
+
+    setAvatarFile(file);
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,7 +134,8 @@ const Register = () => {
         formData.name,
         formData.email,
         formData.password,
-        formData.confirmPassword
+        formData.confirmPassword,
+        avatarFile
       );
 
       if (result.success) {
@@ -160,6 +195,54 @@ const Register = () => {
               {error}
             </Alert>
           )}
+
+          {/* Avatar Upload Section */}
+          <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+              Profile Picture (Optional)
+            </Typography>
+            <Box
+              onClick={() => fileInputRef.current?.click()}
+              sx={{
+                width: 120,
+                height: 120,
+                border: '2px dashed #1976d2',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                backgroundColor: avatarPreview ? 'transparent' : '#f5f5f5',
+                backgroundImage: avatarPreview ? `url(${avatarPreview})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: '#1565c0',
+                  backgroundColor: avatarPreview ? 'transparent' : '#eeeeee'
+                }
+              }}
+            >
+              {!avatarPreview && (
+                <Typography variant="caption" sx={{ textAlign: 'center', color: '#666' }}>
+                  Click to upload
+                </Typography>
+              )}
+            </Box>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarSelect}
+              style={{ display: 'none' }}
+              disabled={submitting || loading}
+            />
+            <Typography variant="caption" color="textSecondary">
+              JPG, PNG, GIF, or WebP • Max 5MB
+            </Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
 
           {/* Registration Form */}
           <Box component="form" onSubmit={handleSubmit} noValidate>

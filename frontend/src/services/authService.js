@@ -4,13 +4,22 @@ const API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/auth`;
 
 const authService = {
   // Register user
-  register: async (name, email, password, confirmPassword) => {
+  register: async (name, email, password, confirmPassword, avatarFile = null) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/register`, {
-        name,
-        email,
-        password,
-        confirmPassword
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('confirmPassword', confirmPassword);
+
+      if (avatarFile) {
+        formData.append('avatar', avatarFile);
+      }
+
+      const response = await axios.post(`${API_BASE_URL}/register`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
       
       if (response.data.token) {

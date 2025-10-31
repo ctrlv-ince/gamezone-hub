@@ -1,5 +1,7 @@
 const User = require('../models/user');
 const validator = require('validator');
+const { uploadImage, deleteImage } = require('../utils/cloudinary');
+const fs = require('fs');
 
 // Register user
 exports.registerUser = async (req, res) => {
@@ -51,15 +53,35 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create user with default avatar
+    // Handle avatar upload if provided
+    let avatar = {
+      public_id: 'default',
+      url: 'https://via.placeholder.com/150?text=Avatar'
+    };
+
+    if (req.file) {
+      try {
+        avatar = await uploadImage(req.file.path, 'gamezone/avatars');
+        // Delete temporary file
+        fs.unlinkSync(req.file.path);
+      } catch (uploadError) {
+        // Delete temporary file if upload fails
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
+        return res.status(400).json({
+          success: false,
+          message: uploadError.message
+        });
+      }
+    }
+
+    // Create user with avatar
     user = await User.create({
       name,
       email,
       password,
-      avatar: {
-        public_id: 'default',
-        url: 'https://via.placeholder.com/150?text=Avatar'
-      }
+      avatar
     });
 
     // Get JWT token
@@ -172,6 +194,73 @@ exports.logoutUser = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Error logging out'
+    });
+  }
+};
+
+// Update user avatar
+exports.updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please upload an image'
+      });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Delete old avatar if not default
+    if (user.avatar.public_id !== 'default') {
+      try {
+        await deleteImage(user.avatar.public_id);
+      } catch (deleteError) {
+        console.error('Error deleting old avatar:', deleteError);
+      }
+    }
+
+    // Upload new avatar
+    try {
+      const avatar = await uploadImage(req.file.path, 'gamezone/avatars');
+      // Delete temporary file
+      fs.unlinkSync(req.file.path);
+
+      // Update user avatar
+      user.avatar = avatar;
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        message: 'Avatar updated successfully',
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar
+        }
+      });
+    } catch (uploadError) {
+      // Delete temporary file if upload fails
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      throw uploadError;
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Error updating avatar'
     });
   }
 };
