@@ -1,46 +1,62 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+/**
+ * Authentication Middleware
+ * JWT token verification and user identification
+ */
 
-exports.authenticate = async (req, res, next) => {
+const jwt = require('jsonwebtoken');
+const { AuthenticationError, AuthorizationError } = require('../utils/errorHandler');
+const userRepository = require('../repositories/userRepository');
+
+/**
+ * Verify JWT token and attach user to request
+ */
+exports.authenticate = (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Please login to access this resource'
-      });
+      throw new AuthenticationError('Please login to access this resource');
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = { id: decoded.id };
     next();
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: 'Unauthorized access'
-    });
+    if (error instanceof AuthenticationError) {
+      next(error);
+    } else if (error.name === 'JsonWebTokenError') {
+      next(new AuthenticationError('Invalid token'));
+    } else if (error.name === 'TokenExpiredError') {
+      next(new AuthenticationError('Token expired'));
+    } else {
+      next(error);
+    }
   }
 };
 
-exports.authorize = (...roles) => {
+/**
+ * Verify user has required role
+ */
+exports.authorize = (...allowedRoles) => {
   return async (req, res, next) => {
     try {
-      const user = await User.findById(req.user.id);
+      if (!req.user) {
+        throw new AuthenticationError('Authentication required');
+      }
 
-      if (!roles.includes(user.role)) {
-        return res.status(403).json({
-          success: false,
-          message: 'Forbidden: Insufficient permissions'
-        });
+      const user = await userRepository.findById(req.user.id);
+
+      if (!user) {
+        throw new AuthenticationError('User not found');
+      }
+
+      if (!allowedRoles.includes(user.role)) {
+        throw new AuthorizationError('Insufficient permissions');
       }
 
       next();
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      next(error);
     }
   };
 };

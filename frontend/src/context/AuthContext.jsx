@@ -1,5 +1,6 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
-import authService from '../services/authService';
+import { authService } from '../services/authService';
+import { storageService } from '../services/storage/storage.service';
 
 export const AuthContext = createContext();
 
@@ -12,22 +13,16 @@ export const AuthProvider = ({ children }) => {
   // Initialize auth state from localStorage and fetch fresh user data
   useEffect(() => {
     const initAuth = async () => {
-      const storedToken = authService.getToken();
-      const storedUser = authService.getUser();
+      const storedToken = storageService.getToken();
+      const storedUser = storageService.getUser();
 
       if (storedToken && storedUser) {
         setToken(storedToken);
         
         // Fetch fresh user data from API to ensure avatar is up-to-date
         try {
-          const response = await authService.getCurrentUser(storedToken);
-          if (response.success && response.user) {
-            setUser(response.user);
-            // Update localStorage with fresh data
-            localStorage.setItem('user', JSON.stringify(response.user));
-          } else {
-            setUser(storedUser);
-          }
+          const freshUser = await authService.getCurrentUser();
+          setUser(freshUser);
         } catch (err) {
           console.error('Error fetching user:', err);
           // Fallback to stored user if API fails
@@ -42,21 +37,25 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Register user
-  const register = useCallback(async (name, email, password, confirmPassword, address, contactNumber, avatarFile = null) => {
+  const register = useCallback(async (name, email, password, confirmPassword, address, contactNumber, avatar = null) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await authService.register(name, email, password, confirmPassword, address, contactNumber, avatarFile);
+      const userData = {
+        name,
+        email,
+        password,
+        confirmPassword,
+        address,
+        contactNumber,
+        avatar
+      };
 
-      if (response.success) {
-        setToken(response.token);
-        setUser(response.user);
-        return { success: true, message: 'Registration successful' };
-      }
-
-      setError(response.message);
-      return response;
+      const result = await authService.register(userData);
+      setToken(result.token);
+      setUser(result.user);
+      return { success: true, message: 'Registration successful' };
     } catch (err) {
       const errorMessage = err.message || 'Registration failed';
       setError(errorMessage);
@@ -72,16 +71,10 @@ export const AuthProvider = ({ children }) => {
     setError(null);
 
     try {
-      const response = await authService.login(email, password);
-
-      if (response.success) {
-        setToken(response.token);
-        setUser(response.user);
-        return { success: true, message: 'Login successful' };
-      }
-
-      setError(response.message);
-      return response;
+      const result = await authService.login(email, password);
+      setToken(result.token);
+      setUser(result.user);
+      return { success: true, message: 'Login successful' };
     } catch (err) {
       const errorMessage = err.message || 'Login failed';
       setError(errorMessage);
@@ -104,6 +97,11 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   }, []);
 
+  // Update user in context
+  const updateAuthUser = useCallback((updatedUser) => {
+    setUser(updatedUser);
+  }, []);
+
   const value = {
     user,
     token,
@@ -113,6 +111,7 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     clearError,
+    updateAuthUser,
     isLoggedIn: !!token
   };
 

@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import UpdateProfile from './pages/UpdateProfile';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -29,6 +30,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update-profile"
+            element={
+              <ProtectedRoute>
+                <UpdateProfile />
               </ProtectedRoute>
             }
           />

@@ -34,6 +34,11 @@ const Navbar = () => {
     navigate('/login');
   };
 
+  const handleEditProfile = () => {
+    handleMenuClose();
+    navigate('/update-profile');
+  };
+
   return (
     <AppBar
       position="fixed"
@@ -166,6 +171,9 @@ const Navbar = () => {
                 <Typography variant="caption" color="textSecondary">
                   {user?.address}
                 </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleEditProfile}>
+                <Typography variant="body2">Edit Profile</Typography>
               </MenuItem>
               <MenuItem onClick={handleLogout} sx={{ color: '#ef4444' }}>
                 Logout

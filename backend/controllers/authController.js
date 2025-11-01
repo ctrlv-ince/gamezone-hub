@@ -1,277 +1,109 @@
-const User = require('../models/user');
-const validator = require('validator');
-const { uploadImage, deleteImage } = require('../utils/cloudinary');
-const fs = require('fs');
+/**
+ * Auth Controller
+ * Route handlers for authentication endpoints
+ * Delegates business logic to services
+ */
 
-// Register user
-exports.registerUser = async (req, res) => {
+const authService = require('../services/authService');
+const { sendSuccess, sendError } = require('../utils/responseHandler');
+
+/**
+ * POST /api/auth/register
+ * Register new user
+ */
+exports.registerUser = async (req, res, next) => {
   try {
     const { name, email, password, confirmPassword, address, contactNumber } = req.body;
 
-    // Validation
-    if (!name || !email || !password || !confirmPassword || !address || !contactNumber) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide all required fields'
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: 'Passwords do not match'
-      });
-    }
-
-    if (!validator.isEmail(email)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please enter a valid email'
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: 'Password must be at least 6 characters'
-      });
-    }
-
-    if (name.length > 30) {
-      return res.status(400).json({
-        success: false,
-        message: 'Name cannot exceed 30 characters'
-      });
-    }
-
-    // Check if user already exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({
-        success: false,
-        message: 'User already exists with this email'
-      });
-    }
-
-    // Handle avatar upload if provided
-    let avatar = {
-      public_id: 'default',
-      url: 'https://via.placeholder.com/150?text=Avatar'
-    };
-
-    if (req.file) {
-      try {
-        avatar = await uploadImage(req.file.path, 'gamezone/avatars');
-        // Delete temporary file
-        fs.unlinkSync(req.file.path);
-      } catch (uploadError) {
-        // Delete temporary file if upload fails
-        if (fs.existsSync(req.file.path)) {
-          fs.unlinkSync(req.file.path);
-        }
-        return res.status(400).json({
-          success: false,
-          message: uploadError.message
-        });
-      }
-    }
-
-    // Create user with avatar, address, and contact number
-    user = await User.create({
+    const result = await authService.registerUser({
       name,
       email,
       password,
+      confirmPassword,
       address,
       contactNumber,
-      avatar
+      avatarFile: req.file
     });
 
-    // Get JWT token
-    const token = user.getJwtToken();
-
-    res.status(201).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        address: user.address,
-        contactNumber: user.contactNumber,
-        role: user.role,
-        avatar: user.avatar
-      }
-    });
+    sendSuccess(res, 'User registered successfully', result, 201);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error registering user'
-    });
+    next(error);
   }
 };
 
-// Login user
-exports.loginUser = async (req, res) => {
+/**
+ * POST /api/auth/login
+ * Login user
+ */
+exports.loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // Validation
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide email and password'
-      });
-    }
+    const result = await authService.loginUser(email, password);
 
-    // Find user and select password field
-    const user = await User.findOne({ email }).select('+password');
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password'
-      });
-    }
-
-    // Compare password
-    const isPasswordMatched = await user.comparePassword(password);
-
-    if (!isPasswordMatched) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid email or password'
-      });
-    }
-
-    // Get JWT token
-    const token = user.getJwtToken();
-
-    res.status(200).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        address: user.address,
-        contactNumber: user.contactNumber,
-        role: user.role,
-        avatar: user.avatar
-      }
-    });
+    sendSuccess(res, 'Logged in successfully', result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error logging in'
-    });
+    next(error);
   }
 };
 
-// Get current user
-exports.getCurrentUser = async (req, res) => {
+/**
+ * GET /api/auth/me
+ * Get current user
+ */
+exports.getCurrentUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
+    const result = await authService.getCurrentUser(req.user.id);
 
-    res.status(200).json({
-      success: true,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        address: user.address,
-        contactNumber: user.contactNumber,
-        role: user.role,
-        avatar: user.avatar
-      }
-    });
+    sendSuccess(res, 'User fetched successfully', result);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error fetching user'
-    });
+    next(error);
   }
 };
 
-// Logout user (typically handled on frontend by clearing token)
-exports.logoutUser = async (req, res) => {
+/**
+ * POST /api/auth/logout
+ * Logout user (typically handled on frontend)
+ */
+exports.logoutUser = async (req, res, next) => {
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Logged out successfully'
-    });
+    sendSuccess(res, 'Logged out successfully', {});
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error logging out'
-    });
+    next(error);
   }
 };
 
-// Update user avatar
-exports.updateAvatar = async (req, res) => {
+/**
+ * PUT /api/auth/profile
+ * Update user profile
+ */
+exports.updateProfile = async (req, res, next) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please upload an image'
-      });
-    }
+    const { name, email, address, contactNumber } = req.body;
 
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    // Delete old avatar if not default
-    if (user.avatar.public_id !== 'default') {
-      try {
-        await deleteImage(user.avatar.public_id);
-      } catch (deleteError) {
-        console.error('Error deleting old avatar:', deleteError);
-      }
-    }
-
-    // Upload new avatar
-    try {
-      const avatar = await uploadImage(req.file.path, 'gamezone/avatars');
-      // Delete temporary file
-      fs.unlinkSync(req.file.path);
-
-      // Update user avatar
-      user.avatar = avatar;
-      await user.save();
-
-      res.status(200).json({
-        success: true,
-        message: 'Avatar updated successfully',
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          address: user.address,
-          contactNumber: user.contactNumber,
-          role: user.role,
-          avatar: user.avatar
-        }
-      });
-    } catch (uploadError) {
-      // Delete temporary file if upload fails
-      if (fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      throw uploadError;
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Error updating avatar'
+    const result = await authService.updateUserProfile(req.user.id, {
+      name,
+      email,
+      address,
+      contactNumber
     });
+
+    sendSuccess(res, result.message, { user: result.user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * PUT /api/auth/avatar
+ * Update user avatar
+ */
+exports.updateAvatar = async (req, res, next) => {
+  try {
+    const result = await authService.updateUserAvatar(req.user.id, req.file);
+
+    sendSuccess(res, result.message, { user: result.user });
+  } catch (error) {
+    next(error);
   }
 };

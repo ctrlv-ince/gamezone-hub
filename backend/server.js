@@ -1,12 +1,21 @@
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const mongoose = require('mongoose');
 
-// Import routes
+// Import config
+const { connectDB } = require('./config/database');
+const { HTTP_STATUS } = require('./config/constants');
+
+// Import middleware
 const authRoutes = require('./routes/auth');
 
-// Initialize app
+// Import error class
+const { AppError } = require('./utils/errorHandler');
+
+// ============================================================================
+// APP INITIALIZATION
+// ============================================================================
+
 const app = express();
 
 // ============================================================================
@@ -17,11 +26,11 @@ const app = express();
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Body parser middleware
+// Body parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
@@ -29,20 +38,13 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // DATABASE CONNECTION
 // ============================================================================
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('✅ MongoDB connected successfully');
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
-    process.exit(1);
-  });
+connectDB();
 
 // ============================================================================
 // ROUTES
 // ============================================================================
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running' });
 });
@@ -50,23 +52,72 @@ app.get('/api/health', (req, res) => {
 // Authentication routes
 app.use('/api/auth', authRoutes);
 
-// 404 handler
+// ============================================================================
+// 404 HANDLER
+// ============================================================================
+
 app.use((req, res) => {
-  res.status(404).json({
+  res.status(HTTP_STATUS.NOT_FOUND).json({
     success: false,
     message: 'Route not found'
   });
 });
 
 // ============================================================================
-// ERROR HANDLING MIDDLEWARE
+// GLOBAL ERROR HANDLER
 // ============================================================================
 
-// Global error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
+  console.error('❌ Error:', {
+    name: err.name,
+    message: err.message,
+    statusCode: err.statusCode,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
 
-  res.status(err.status || 500).json({
+  // Handle custom AppError instances
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message
+    });
+  }
+
+  // Handle JWT errors
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      success: false,
+      message: 'Invalid token'
+    });
+  }
+
+  if (err.name === 'TokenExpiredError') {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      success: false,
+      message: 'Token expired'
+    });
+  }
+
+  // Handle Mongoose validation errors
+  if (err.name === 'ValidationError') {
+    const messages = Object.values(err.errors).map(e => e.message);
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      success: false,
+      message: messages[0] || 'Validation error'
+    });
+  }
+
+  // Handle MongoDB duplicate key errors
+  if (err.code === 11000) {
+    const field = Object.keys(err.keyPattern)[0];
+    return res.status(HTTP_STATUS.CONFLICT).json({
+      success: false,
+      message: `${field} already exists`
+    });
+  }
+
+  // Generic error
+  res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     success: false,
     message: err.message || 'Internal server error',
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
@@ -77,10 +128,10 @@ app.use((err, req, res, next) => {
 // SERVER START
 // ============================================================================
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║         🎮 GameZone Hub Backend Server Started             ║
@@ -93,15 +144,24 @@ app.listen(PORT, () => {
   `);
 });
 
-// Graceful shutdown
+// ============================================================================
+// GRACEFUL SHUTDOWN
+// ============================================================================
+
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully');
-  process.exit(0);
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
 
 process.on('SIGINT', () => {
   console.log('SIGINT received, shutting down gracefully');
-  process.exit(0);
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
 
 module.exports = app;
