@@ -7,5 +7,10 @@
   },
   "author": "borja",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.4"
+  }
 }
