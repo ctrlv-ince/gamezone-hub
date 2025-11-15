@@ -17,7 +17,7 @@ const Footer = () => {
     >
       <Container maxWidth="lg">
         <Grid container spacing={4} justifyContent="space-evenly">
-          <Grid xs={12} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6" gutterBottom sx={{ color: '#ffffff', fontWeight: 'bold' }}>
               About Us
             </Typography>
@@ -25,7 +25,7 @@ const Footer = () => {
               Gamezone Hub is your one-stop shop for all things gaming.
             </Typography>
           </Grid>
-          <Grid xs={6} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6" gutterBottom sx={{ color: '#ffffff', fontWeight: 'bold' }}>
               Customer Service
             </Typography>
@@ -33,7 +33,7 @@ const Footer = () => {
             <Link href="#" display="block" variant="body2" sx={{ color: '#bbbbbb', '&:hover': { color: '#ffffff' } }}>FAQs</Link>
             <Link href="#" display="block" variant="body2" sx={{ color: '#bbbbbb', '&:hover': { color: '#ffffff' } }}>Shipping & Returns</Link>
           </Grid>
-          <Grid xs={6} sm={4}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6" gutterBottom sx={{ color: '#ffffff', fontWeight: 'bold' }}>
               Follow Us
             </Typography>

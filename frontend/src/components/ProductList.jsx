@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllProducts } from '../services/productService';
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import ProductCard from './ProductCard';
 
 const ProductList = () => {
@@ -17,9 +17,6 @@ const ProductList = () => {
 
   return (
     <Container sx={{ py: 8 }} maxWidth="md">
-      <Typography variant="h4" component="h2" gutterBottom>
-        Product List
-      </Typography>
       <Grid container spacing={4}>
         {products.map((product) => (
           <Grid item key={product._id} xs={12} sm={6} md={4}>
