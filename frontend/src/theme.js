@@ -13,6 +13,24 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: 'Roboto, sans-serif',
+    h1: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
+    h2: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
+    h3: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
+    h4: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
+    h5: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
+    h6: {
+      fontFamily: "'Orbitron', sans-serif",
+    },
   },
 });
 
