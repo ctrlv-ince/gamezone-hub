@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductById } from '../services/productService';
 import { addToCart as addToCartService } from '../services/cartService';
+import { getToken } from '../utils/auth';
 import {
   Container,
   Grid,
@@ -23,7 +24,8 @@ const ProductDetailsPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await getProductById(id);
+        const token = getToken();
+        const data = await getProductById(id, token);
         setProduct(data);
       } catch (err) {
         setError(err.message);
@@ -88,7 +90,8 @@ const ProductDetailsPage = () => {
                sx={{ mt: 2 }}
                onClick={async () => {
                  try {
-                   await addToCartService(product._id, 1);
+                   const token = getToken();
+                   await addToCartService({ productId: product._id, quantity: 1 }, token);
                    alert('Product added to cart!');
                  } catch (error) {
                    console.error('Error adding to cart:', error);

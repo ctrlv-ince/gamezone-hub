@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAllProducts } from '../services/productService';
+import { getToken } from '../utils/auth';
 import { Container, Grid } from '@mui/material';
 import ProductCard from './ProductCard';
 
@@ -8,7 +9,8 @@ const ProductList = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const data = await getAllProducts();
+      const token = getToken();
+      const data = await getAllProducts(token);
       setProducts(data);
     };
 

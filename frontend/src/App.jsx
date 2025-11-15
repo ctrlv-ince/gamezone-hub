@@ -11,6 +11,9 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import UploadPage from './pages/UploadPage';
 import CartPage from './pages/CartPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import ProtectedRoute from './components/ProtectedRoute';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
@@ -24,11 +27,14 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
           <Route path="/upload" element={<UploadPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          </Route>
         </Routes>
       </Container>
       <Footer />
+      <ToastContainer />
     </Box>
   );
 }
