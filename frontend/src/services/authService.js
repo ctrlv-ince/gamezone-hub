@@ -1,4 +1,4 @@
-import api from '../utils/api';
+import api from './api';
 
 const getMe = async () => {
   const res = await api.get('/auth/me');

@@ -20,7 +20,7 @@ const ProductList = () => {
   return (
     <Container sx={{ py: 8 }} maxWidth="md">
       <Grid container spacing={4}>
-        {products.map((product) => (
+        {Array.isArray(products) && products.map((product) => (
           <Grid item key={product._id} xs={12} sm={6} md={4}>
             <ProductCard product={product} />
           </Grid>
