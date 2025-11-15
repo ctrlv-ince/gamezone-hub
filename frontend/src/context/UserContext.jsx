@@ -9,14 +9,14 @@ export const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (token) {
         try {
           const response = await api.get('/auth/me');
           setUser(response.data);
         } catch (error) {
           console.error('Failed to fetch user', error);
-          localStorage.removeItem('token');
+          sessionStorage.removeItem('token');
         }
       }
       setLoading(false);
@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setUser(null);
   };
 

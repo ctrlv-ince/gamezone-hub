@@ -60,9 +60,7 @@ const Login = () => {
       );
       const { user } = userCredential;
       const idToken = await user.getIdToken();
-      localStorage.setItem('token', idToken);
-
-      const userData = await authService.getMe();
+      sessionStorage.setItem('token', idToken);
       login(userData);
       navigate('/');
     } catch (error) {
@@ -77,7 +75,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       const { user } = result;
       const idToken = await user.getIdToken();
-      localStorage.setItem('token', idToken);
+      sessionStorage.setItem('token', idToken);
 
 
       const userData = await authService.getMe();
