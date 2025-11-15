@@ -1,0 +1,26 @@
+# Order Schema
+
+-   **user**:
+    -   Type: ObjectId
+    -   Ref: 'User'
+    -   Required: true
+-   **orderItems**:
+    -   Type: Array
+    -   Required: true
+    -   Schema:
+        -   **product**:
+            -   Type: ObjectId
+            -   Ref: 'Product'
+            -   Required: true
+        -   **quantity**:
+            -   Type: Number
+            -   Required: true
+        -   **price**:
+            -   Type: Number
+            -   Required: true
+-   **totalPrice**:
+    -   Type: Number
+    -   Required: true
+-   **createdAt**:
+    -   Type: Date
+    -   Default: Date.now

@@ -4,7 +4,7 @@ const {
   getAllProducts,
   getProductById,
 } = require('../controllers/productController');
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 
 
 router.get('/', auth, getAllProducts);
