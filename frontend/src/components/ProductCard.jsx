@@ -9,7 +9,19 @@ import {
   Button,
 } from '@mui/material';
 
+import { addToCart } from '../services/cartService';
+
 const ProductCard = ({ product }) => {
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(product._id, 1);
+      alert('Product added to cart!');
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add product to cart.');
+    }
+  };
+
   return (
     <Card sx={{
       background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.8), rgba(15, 20, 40, 0.8))',
@@ -44,7 +56,7 @@ const ProductCard = ({ product }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" sx={{ color: '#00d9ff' }}>Add to Cart</Button>
+        <Button size="small" sx={{ color: '#00d9ff' }} onClick={handleAddToCart}>Add to Cart</Button>
         <Button size="small" component={Link} to={`/product/${product._id}`} sx={{ color: '#00d9ff' }}>View Details</Button>
       </CardActions>
     </Card>

@@ -19,5 +19,6 @@ app.get('/api/v1', (req, res) => {
 app.use('/api/v1/auth', require('./routes/auth'));
 app.use('/api/v1/products', require('./routes/products'));
 app.use('/api/v1/upload', require('./routes/upload'));
+app.use('/api/v1/cart', require('./routes/cart'));
 
 module.exports = app;

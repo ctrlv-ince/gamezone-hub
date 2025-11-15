@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getProductById } from '../services/productService';
+import { addToCart as addToCartService } from '../services/cartService';
 import {
   Container,
   Grid,
@@ -10,6 +11,7 @@ import {
   CardContent,
   CircularProgress,
   Alert,
+  Button,
 } from '@mui/material';
 
 const ProductDetailsPage = () => {
@@ -79,13 +81,29 @@ const ProductDetailsPage = () => {
               </Typography>
               <Typography variant="h5" color="primary">
                 ${product.price}
-              </Typography>
-            </CardContent>
-          </Grid>
-        </Grid>
-      </Card>
-    </Container>
-  );
+             </Typography>
+             <Button
+               variant="contained"
+               color="primary"
+               sx={{ mt: 2 }}
+               onClick={async () => {
+                 try {
+                   await addToCartService(product._id, 1);
+                   alert('Product added to cart!');
+                 } catch (error) {
+                   console.error('Error adding to cart:', error);
+                   alert('Failed to add product to cart.');
+                 }
+               }}
+             >
+               Add to Cart
+             </Button>
+           </CardContent>
+         </Grid>
+       </Grid>
+     </Card>
+   </Container>
+ );
 };
 
 export default ProductDetailsPage;

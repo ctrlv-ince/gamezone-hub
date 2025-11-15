@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { styled } from '@mui/material/styles';
 
 const RainbowText = styled('span')({
@@ -36,6 +37,9 @@ const Header = () => {
         <Button color="inherit" component={Link} to="/products" sx={{ '&:hover': { color: '#00d9ff' } }}>Products</Button>
         <Button color="inherit" component={Link} to="/login" sx={{ '&:hover': { color: '#00d9ff' } }}>Login</Button>
         <Button color="inherit" component={Link} to="/register" sx={{ '&:hover': { color: '#00d9ff' } }}>Register</Button>
+        <IconButton color="inherit" component={Link} to="/cart" sx={{ '&:hover': { color: '#00d9ff' } }}>
+          <ShoppingCartIcon />
+        </IconButton>
       </Toolbar>
     </AppBar>
   );
