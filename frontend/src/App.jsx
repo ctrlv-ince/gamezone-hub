@@ -8,6 +8,7 @@ import ProductsPage from './pages/ProductsPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductDetailsPage from './pages/ProductDetailsPage';
+import UploadPage from './pages/UploadPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/upload" element={<UploadPage />} />
         </Routes>
       </Container>
       <Footer />
