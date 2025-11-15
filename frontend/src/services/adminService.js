@@ -1,10 +1,10 @@
-import axios from 'axios';
+import api from '../utils/api';
 
-const API_URL = 'http://localhost:5000/api/v1/orders';
+const API_URL = '/orders';
 
 export const getSalesData = async (startDate, endDate) => {
   try {
-    const response = await axios.get(`${API_URL}/sales`, {
+    const response = await api.get(`${API_URL}/sales`, {
       params: {
         startDate,
         endDate,

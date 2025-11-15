@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Container,
   Box,
@@ -7,8 +8,15 @@ import {
   Button,
   styled,
 } from '@mui/material';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
 import { auth } from '../config/firebase';
+import authService from '../services/authService';
+import { UserContext } from '../context/UserContext';
+import api from '../utils/api';
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -39,6 +47,8 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const { login } = useContext(UserContext);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -48,10 +58,33 @@ const Login = () => {
         email,
         password
       );
-      console.log(userCredential);
-      // TODO: Redirect user or show success message
+      const { user } = userCredential;
+      const idToken = await user.getIdToken();
+      localStorage.setItem('token', idToken);
+
+      const userData = await authService.getMe();
+      login(userData);
+      navigate('/');
     } catch (error) {
       console.error('Error signing in:', error);
+      // TODO: Show error message to user
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const { user } = result;
+      const idToken = await user.getIdToken();
+      localStorage.setItem('token', idToken);
+
+
+      const userData = await authService.getMe();
+      login(userData);
+      navigate('/');
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
       // TODO: Show error message to user
     }
   };
@@ -149,6 +182,14 @@ const Login = () => {
               sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
               Login
+            </AnimatedButton>
+            <AnimatedButton
+              fullWidth
+              variant="contained"
+              onClick={handleGoogleSignIn}
+              sx={{ mt: 1, mb: 2, py: 1.5 }}
+            >
+              Sign in with Google
             </AnimatedButton>
           </Box>
         </Box>

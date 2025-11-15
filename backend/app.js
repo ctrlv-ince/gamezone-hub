@@ -9,6 +9,12 @@ app.use(
     origin: process.env.CLIENT_ORIGIN,
   })
 );
+
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+  next();
+});
+
 app.use(express.json());
 
 app.get('/api/v1', (req, res) => {

@@ -1,34 +1,19 @@
-import axios from 'axios';
+import api from '../utils/api';
 
-const API_URL = '/api/v1/cart';
+const API_URL = '/cart';
 
-const getCart = async (token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axios.get(API_URL, config);
+const getCart = async () => {
+  const response = await api.get(API_URL);
   return response.data;
 };
 
-const addToCart = async (item, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axios.post(API_URL, item, config);
+const addToCart = async (item) => {
+  const response = await api.post(API_URL, item);
   return response.data;
 };
 
-const removeFromCart = async (productId, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axios.delete(`${API_URL}/${productId}`, config);
+const removeFromCart = async (productId) => {
+  const response = await api.delete(`${API_URL}/${productId}`);
   return response.data;
 };
 

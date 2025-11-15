@@ -1,5 +1,5 @@
-import admin from '../config/firebase.js';
-import User from '../models/User.js';
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const auth = async (req, res, next) => {
   const authHeader = req.header('Authorization');
@@ -8,24 +8,11 @@ const auth = async (req, res, next) => {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
-  const idToken = authHeader.substring(7);
+  const token = authHeader.replace('Bearer ', '');
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid, email } = decodedToken;
-
-    let user = await User.findOne({ firebaseUid: uid });
-
-    if (!user) {
-      user = new User({
-        email,
-        firebaseUid: uid,
-        username: email,
-      });
-      await user.save();
-    }
-
-    req.user = user;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.user.id).select('-password');
     next();
   } catch (error) {
     res.status(401).json({ msg: 'Token is not valid' });
@@ -40,4 +27,4 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-export { auth, isAdmin };
+module.exports = { auth, isAdmin };

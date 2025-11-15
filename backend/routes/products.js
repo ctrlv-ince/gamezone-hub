@@ -4,10 +4,10 @@ const {
   getAllProducts,
   getProductById,
 } = require('../controllers/productController');
-const { auth } = require('../middleware/auth');
+const { auth } = require('../middleware/jwt');
 
 
-router.get('/', auth, getAllProducts);
-router.get('/:id', auth, getProductById);
+router.get('/', getAllProducts);
+router.get('/:id', getProductById);
 
 module.exports = router;

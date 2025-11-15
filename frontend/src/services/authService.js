@@ -1,5 +1,8 @@
-import axios from 'axios';
+import api from '../utils/api';
 
-const API_URL = `${import.meta.env.VITE_API_BASE_URL}/auth`;
+const getMe = async () => {
+  const res = await api.get('/auth/me');
+  return res.data;
+};
 
-export default {};
+export default { getMe };

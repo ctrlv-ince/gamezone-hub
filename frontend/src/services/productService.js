@@ -1,22 +1,12 @@
-import axios from 'axios';
+import api from '../utils/api';
 
-const API_URL = '/api/v1/products';
+const API_URL = '/products';
 
-export const getAllProducts = async (token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axios.get(API_URL, config);
+export const getAllProducts = async () => {
+  const response = await api.get(API_URL);
   return response.data;
 };
-export const getProductById = async (id, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const response = await axios.get(`${API_URL}/${id}`, config);
+export const getProductById = async (id) => {
+  const response = await api.get(`${API__URL}/${id}`);
   return response.data;
 };
