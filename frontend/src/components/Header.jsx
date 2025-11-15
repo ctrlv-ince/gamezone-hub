@@ -24,7 +24,7 @@ const RainbowText = styled('span')({
 
 const Header = () => {
   return (
-    <AppBar position="static" sx={{ background: '#1a1a1a', borderBottom: '1px solid #333', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
+    <AppBar position="static" sx={{ background: 'linear-gradient(90deg, rgba(10, 14, 39, 0.95), rgba(26, 31, 58, 0.95))', borderBottom: '1px solid #333', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)' }}>
       <Toolbar>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
