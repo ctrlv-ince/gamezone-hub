@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Card,
   CardMedia,
@@ -44,7 +45,7 @@ const ProductCard = ({ product }) => {
       </CardContent>
       <CardActions>
         <Button size="small" sx={{ color: '#00d9ff' }}>Add to Cart</Button>
-        <Button size="small" sx={{ color: '#00d9ff' }}>View Details</Button>
+        <Button size="small" component={Link} to={`/product/${product._id}`} sx={{ color: '#00d9ff' }}>View Details</Button>
       </CardActions>
     </Card>
   );
