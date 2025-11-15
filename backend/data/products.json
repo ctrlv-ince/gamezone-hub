@@ -1,0 +1,137 @@
+[
+    {
+        "name" : "Elden Ring - Standard Edition (PS4)",
+        "price" : 49.99,
+        "description" : "Elden Ring is an action role-playing game developed by FromSoftware and published by Bandai Namco Entertainment. It was directed by Hidetaka Miyazaki and had a world designed by George R. R. Martin. The game rose to prominence for its cooperative multiplayer, gameplay mechanics, and rich worldbuilding. Master its combat mechanics, traverse the Lands Between, and discover the Elden Beast.",
+        "ratings" : 4.9,
+        "images" : [{
+            "public_id" : "products/eldenring_ps4",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "PS4 Games",
+        "seller" : "GameZone Hub",
+        "stock" : 45,
+        "numOfReviews" : 1200,
+        "reviews": []
+    },
+    {
+        "name" : "Call of Duty: Black Ops 6 (Xbox Series X)",
+        "price" : 59.99,
+        "description" : "Experience the ultimate military shooter on next-gen. Black Ops 6 features explosive campaign action, cutting-edge multiplayer, and intense zombies mode. Join the fight across stunning environments with 4K resolution and 120fps gameplay.",
+        "ratings" : 4.7,
+        "images" : [{
+            "public_id" : "products/cod_xbox",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Xbox Games",
+        "seller" : "GameZone Hub",
+        "stock" : 52,
+        "numOfReviews" : 890,
+        "reviews": []
+    },
+    {
+        "name" : "Sony PlayStation 5 Console (Disc Edition)",
+        "price" : 499.99,
+        "description" : "Ultra High-Speed SSD load times, stunning 4K gaming performance, immersive 3D audio, and revolutionary haptic feedback and adaptive trigger technology. Play exclusive titles like God of War, Spider-Man, and more.",
+        "ratings" : 4.8,
+        "images" : [{
+            "public_id" : "products/ps5_console",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Consoles",
+        "seller" : "GameZone Hub",
+        "stock" : 15,
+        "numOfReviews" : 450,
+        "reviews": []
+    },
+    {
+        "name" : "Xbox Series X Console",
+        "price" : 499.99,
+        "description" : "The world's most powerful gaming console with 4K/120fps gaming, Quick Resume feature, and Game Pass Ultimate access. Experience massive performance leap with 12 teraflops of processing power.",
+        "ratings" : 4.8,
+        "images" : [{
+            "public_id" : "products/xbox_seriesx",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Consoles",
+        "seller" : "GameZone Hub",
+        "stock" : 18,
+        "numOfReviews" : 385,
+        "reviews": []
+    },
+    {
+        "name" : "The Legend of Zelda: Tears of the Kingdom (Nintendo Switch)",
+        "price" : 59.99,
+        "description" : "The long-awaited sequel to The Legend of Zelda: Breath of the Wild. Embark on an epic adventure in the vast open world of Hyrule. Use Link's new Fused Powers to combat puzzles and enemies, and discover secrets throughout the kingdom.",
+        "ratings" : 4.9,
+        "images" : [{
+            "public_id" : "products/zelda_switch",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Nintendo Switch Games",
+        "seller" : "GameZone Hub",
+        "stock" : 38,
+        "numOfReviews" : 750,
+        "reviews": []
+    },
+    {
+        "name" : "DualSense Wireless Controller - Galactic Purple",
+        "price" : 74.99,
+        "description" : "Experience next-gen gaming with the DualSense controller. Features haptic feedback, adaptive triggers, built-in microphone, and advanced vibration technology. Compatible with PS5 and select PC titles.",
+        "ratings" : 4.6,
+        "images" : [{
+            "public_id" : "products/dualsense_purple",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Accessories",
+        "seller" : "GameZone Hub",
+        "stock" : 120,
+        "numOfReviews" : 580,
+        "reviews": []
+    },
+    {
+        "name" : "HyperX Cloud Stinger 2 Gaming Headset",
+        "price" : 99.99,
+        "description" : "Professional-grade gaming headset with 7.1 virtual surround sound, memory foam ear cushions, and 90-degree rotating microphone. Works with PC, PS5, Xbox Series X, and Nintendo Switch.",
+        "ratings" : 4.7,
+        "images" : [{
+            "public_id" : "products/hyperx_headset",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Accessories",
+        "seller" : "GameZone Hub",
+        "stock" : 85,
+        "numOfReviews" : 420,
+        "reviews": []
+    },
+    {
+        "name" : "Hogwarts Legacy (PC - Steam CD Key)",
+        "price" : 39.99,
+        "description" : "Immerse yourself in the Wizarding World as a student at Hogwarts School of Witchcraft and Wizardry. Experience magic like never before in this immersive action RPG set in the 1800s.",
+        "ratings" : 4.5,
+        "images" : [{
+            "public_id" : "products/hogwarts_pc",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "PC Games",
+        "seller" : "GameZone Hub",
+        "stock" : 200,
+        "numOfReviews" : 920,
+        "reviews": []
+    },
+    {
+        "name" : "Logitech Pro X Mechanical Gaming Keyboard",
+        "price" : 149.99,
+        "description" : "Tournament-grade mechanical keyboard with hot-swappable switches, LIGHTSYNC RGB customization, and premium build quality. Perfect for competitive gaming and typing.",
+        "ratings" : 4.8,
+        "images" : [{
+            "public_id" : "products/logitech_kb",
+            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+        }],
+        "category" : "Accessories",
+        "seller" : "GameZone Hub",
+        "stock" : 65,
+        "numOfReviews" : 310,
+        "reviews": []
+    }
+]
