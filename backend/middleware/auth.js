@@ -1,32 +1,33 @@
-const jwt = require('jsonwebtoken');
+import admin from '../config/firebase.js';
+import User from '../models/User.js';
 
-const auth = (req, res, next) => {
-  // Get token from header
+const auth = async (req, res, next) => {
   const authHeader = req.header('Authorization');
 
-  // Check if not token
-  if (!authHeader) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ msg: 'No token, authorization denied' });
   }
 
-  const tokenParts = authHeader.split(' ');
+  const idToken = authHeader.split('Bearer ');
 
-  if (tokenParts.length !== 2 || tokenParts !== 'Bearer') {
-    return res.status(401).json({ msg: 'Token format is "Bearer <token>"' });
-  }
-
-  const token = tokenParts;
-
-  if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' });
-  }
-
-  // Verify token
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user;
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const { uid, email } = decodedToken;
+
+    let user = await User.findOne({ firebaseUid: uid });
+
+    if (!user) {
+      user = new User({
+        email,
+        firebaseUid: uid,
+        username: email,
+      });
+      await user.save();
+    }
+
+    req.user = user;
     next();
-  } catch (err) {
+  } catch (error) {
     res.status(401).json({ msg: 'Token is not valid' });
   }
 };
@@ -39,4 +40,4 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-module.exports = { auth, isAdmin };
+export { auth, isAdmin };

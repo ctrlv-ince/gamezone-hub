@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Box,
@@ -7,6 +7,8 @@ import {
   Button,
   styled,
 } from '@mui/material';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -35,6 +37,25 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const Register = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(userCredential);
+      // TODO: Redirect user or show success message
+    } catch (error) {
+      console.error('Error registering:', error);
+      // TODO: Show error message to user
+    }
+  };
+
   const wrapperStyles = {
     minHeight: '100vh',
     display: 'flex',
@@ -62,7 +83,7 @@ const Register = () => {
           <Typography component="h1" variant="h5" sx={{ color: '#ffffff', mb: 3 }}>
             Register
           </Typography>
-          <Box component="form" sx={{ mt: 3, width: '100%' }}>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
             <TextField
               margin="normal"
               required
@@ -98,6 +119,8 @@ const Register = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
               }}
@@ -125,6 +148,8 @@ const Register = () => {
               type="password"
               id="password"
               autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
               }}
