@@ -1,82 +1,26 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const authService = require('../services/authService');
 
 const registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
-
   try {
-    let useremail = await User.findOne({ email });
-    let useruname = await User.findOne({ username });
-
-    if (useremail || useruname) {
-      return res.status(400).json({ msg: 'User already exists' });
-    }
-
-    user = new User({
-      username,
-      email,
-      password,
-    });
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
-
-    await user.save();
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    const { token } = await authService.register(req.body);
+    res.json({ token });
   } catch (err) {
+    if (err.message === 'User already exists') {
+      return res.status(400).json({ msg: err.message });
+    }
     console.error(err.message);
     res.status(500).send('Server error');
   }
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    let user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(400).json({ msg: 'Invalid Credentials' });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid Credentials' });
-    }
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+    const { token } = await authService.login(req.body);
+    res.json({ token });
   } catch (err) {
+    if (err.message === 'Invalid Credentials') {
+      return res.status(400).json({ msg: err.message });
+    }
     console.error(err.message);
     res.status(500).send('Server error');
   }
