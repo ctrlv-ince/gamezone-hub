@@ -6,10 +6,9 @@
         "ratings" : 4.9,
         "images" : [{
             "public_id" : "products/eldenring_ps4",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "PS4 Games",
-        "seller" : "GameZone Hub",
         "stock" : 45,
         "numOfReviews" : 1200,
         "reviews": []
@@ -21,10 +20,9 @@
         "ratings" : 4.7,
         "images" : [{
             "public_id" : "products/cod_xbox",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Xbox Games",
-        "seller" : "GameZone Hub",
         "stock" : 52,
         "numOfReviews" : 890,
         "reviews": []
@@ -36,10 +34,9 @@
         "ratings" : 4.8,
         "images" : [{
             "public_id" : "products/ps5_console",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Consoles",
-        "seller" : "GameZone Hub",
         "stock" : 15,
         "numOfReviews" : 450,
         "reviews": []
@@ -51,10 +48,9 @@
         "ratings" : 4.8,
         "images" : [{
             "public_id" : "products/xbox_seriesx",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Consoles",
-        "seller" : "GameZone Hub",
         "stock" : 18,
         "numOfReviews" : 385,
         "reviews": []
@@ -66,10 +62,9 @@
         "ratings" : 4.9,
         "images" : [{
             "public_id" : "products/zelda_switch",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Nintendo Switch Games",
-        "seller" : "GameZone Hub",
         "stock" : 38,
         "numOfReviews" : 750,
         "reviews": []
@@ -81,10 +76,9 @@
         "ratings" : 4.6,
         "images" : [{
             "public_id" : "products/dualsense_purple",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Accessories",
-        "seller" : "GameZone Hub",
         "stock" : 120,
         "numOfReviews" : 580,
         "reviews": []
@@ -96,10 +90,9 @@
         "ratings" : 4.7,
         "images" : [{
             "public_id" : "products/hyperx_headset",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Accessories",
-        "seller" : "GameZone Hub",
         "stock" : 85,
         "numOfReviews" : 420,
         "reviews": []
@@ -111,10 +104,9 @@
         "ratings" : 4.5,
         "images" : [{
             "public_id" : "products/hogwarts_pc",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "PC Games",
-        "seller" : "GameZone Hub",
         "stock" : 200,
         "numOfReviews" : 920,
         "reviews": []
@@ -126,12 +118,143 @@
         "ratings" : 4.8,
         "images" : [{
             "public_id" : "products/logitech_kb",
-            "url" : "https://res.cloudinary.com/bookit/image/upload/v1606231282/products/macbook_o2cj2k.jpg"
+            "url" : "https://placeimg.com/640/480/tech"
         }],
         "category" : "Accessories",
-        "seller" : "GameZone Hub",
         "stock" : 65,
         "numOfReviews" : 310,
+        "reviews": []
+    },
+    {
+        "name": "Nintendo Switch - OLED Model",
+        "price": 349.99,
+        "description": "Features a vibrant 7-inch OLED screen, a wide adjustable stand, a dock with a wired LAN port, 64 GB of internal storage, and enhanced audio.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Consoles",
+        "stock": 25,
+        "numOfReviews": 600,
+        "reviews": []
+    },
+    {
+        "name": "Marvel's Spider-Man 2 (PS5)",
+        "price": 69.99,
+        "description": "Spider-Men, Peter Parker and Miles Morales, return for an exciting new adventure in the critically acclaimed Marvel's Spider-Man franchise for PS5.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "PS5 Games",
+        "stock": 100,
+        "numOfReviews": 1500,
+        "reviews": []
+    },
+    {
+        "name": "Final Fantasy VII Rebirth (PS5)",
+        "price": 69.99,
+        "description": "The second game in the Final Fantasy VII remake project, continuing the story of Cloud Strife and his allies.",
+        "ratings": 4.8,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "PS5 Games",
+        "stock": 80,
+        "numOfReviews": 1100,
+        "reviews": []
+    },
+    {
+        "name": "Starfield (Xbox Series X)",
+        "price": 69.99,
+        "description": "Create any character you want and explore with unparalleled freedom as you embark on an epic journey to answer humanity's greatest mystery.",
+        "ratings": 4.6,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Xbox Games",
+        "stock": 120,
+        "numOfReviews": 950,
+        "reviews": []
+    },
+    {
+        "name": "Forza Motorsport (Xbox Series X)",
+        "price": 69.99,
+        "description": "Race over 500 real-world cars including modern race cars and cutting-edge prototypes in the most realistic racing experience ever.",
+        "ratings": 4.7,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Xbox Games",
+        "stock": 90,
+        "numOfReviews": 800,
+        "reviews": []
+    },
+    {
+        "name": "Super Mario Bros. Wonder (Nintendo Switch)",
+        "price": 59.99,
+        "description": "Classic Mario side-scrolling gameplay is turned on its head with the addition of Wonder Flowers. These game-changing items trigger spectacular moments you have to see to believe.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Nintendo Switch Games",
+        "stock": 150,
+        "numOfReviews": 1300,
+        "reviews": []
+    },
+    {
+        "name": "Cyberpunk 2077: Phantom Liberty (PC - GOG Key)",
+        "price": 29.99,
+        "description": "Return as cyber-enhanced mercenary V and embark on a high-stakes mission of espionage and intrigue to save the NUSA President.",
+        "ratings": 4.8,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "PC Games",
+        "stock": 300,
+        "numOfReviews": 2000,
+        "reviews": []
+    },
+    {
+        "name": "Baldur's Gate 3 (PC - Steam CD Key)",
+        "price": 59.99,
+        "description": "Gather your party and return to the Forgotten Realms in a tale of fellowship and betrayal, sacrifice and survival, and the lure of absolute power.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "PC Games",
+        "stock": 250,
+        "numOfReviews": 3000,
+        "reviews": []
+    },
+    {
+        "name": "Xbox Elite Series 2 Wireless Controller",
+        "price": 179.99,
+        "description": "Experience the Xbox Elite Wireless Controller Series 2 featuring adjustable-tension thumbsticks, wrap-around rubberized grip, and shorter hair trigger locks.",
+        "ratings": 4.7,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Accessories",
+        "stock": 50,
+        "numOfReviews": 700,
+        "reviews": []
+    },
+    {
+        "name": "SteelSeries Arctis Nova Pro Wireless Headset",
+        "price": 349.99,
+        "description": "Almighty Audio has never been more accessible. Vibe with your favorite gaming world and score with your friends. Dive deeper with the superior audio quality from the most-awarded headset makers.",
+        "ratings": 4.8,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Accessories",
+        "stock": 40,
+        "numOfReviews": 550,
+        "reviews": []
+    },
+    {
+        "name": "PlayStation Plus - 12-Month Subscription",
+        "price": 59.99,
+        "description": "Enhance your PlayStation experience with online multiplayer, monthly games, exclusive discounts and more.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Digital Games",
+        "stock": 1000,
+        "numOfReviews": 5000,
+        "reviews": []
+    },
+    {
+        "name": "Xbox Game Pass Ultimate - 3-Month Subscription",
+        "price": 44.99,
+        "description": "Get all the benefits of Xbox Live Gold, plus over 100 high-quality console and PC games. With games added all the time, there's always something new to play.",
+        "ratings": 4.9,
+        "images": [{ "url": "https://placeimg.com/640/480/tech" }],
+        "category": "Digital Games",
+        "stock": 1000,
+        "numOfReviews": 6000,
         "reviews": []
     }
 ]

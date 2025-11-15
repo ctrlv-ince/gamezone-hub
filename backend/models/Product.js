@@ -13,11 +13,23 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  category: {
-    type: String,
-    required: true,
+  ratings: {
+    type: Number,
+    default: 0,
   },
-  platform: {
+  images: [
+    {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  category: {
     type: String,
     required: true,
   },
@@ -26,9 +38,11 @@ const productSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  imageUrl: {
-    type: String,
+  numOfReviews: {
+    type: Number,
+    default: 0,
   },
+  reviews: [],
   createdAt: {
     type: Date,
     default: Date.now,
