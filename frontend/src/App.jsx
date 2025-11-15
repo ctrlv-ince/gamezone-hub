@@ -11,6 +11,7 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import UploadPage from './pages/UploadPage';
 import CartPage from './pages/CartPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import UpdateProfilePage from './pages/UpdateProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,6 +31,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<CartPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/update-profile" element={<UpdateProfilePage />} />
           </Route>
         </Routes>
       </Container>

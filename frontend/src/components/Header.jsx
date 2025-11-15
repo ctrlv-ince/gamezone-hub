@@ -104,6 +104,13 @@ const Header = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <MenuItem
+                component={Link}
+                to="/update-profile"
+                onClick={handleClose}
+              >
+                Update Profile
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>

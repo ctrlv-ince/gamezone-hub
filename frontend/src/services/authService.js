@@ -5,4 +5,9 @@ const getMe = async () => {
   return res.data;
 };
 
-export default { getMe };
+const updateProfile = async (profileData) => {
+  const res = await api.put('/api/v1/auth/me/update', profileData);
+  return res.data;
+};
+
+export default { getMe, updateProfile };

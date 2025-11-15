@@ -11,6 +11,17 @@ const getMe = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const user = await authService.updateProfile(req.user.id, req.body);
+    res.json(user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   getMe,
+  updateProfile,
 };

@@ -5,6 +5,14 @@ const getMe = async (userId) => {
   return user;
 };
 
+const updateProfile = async (userId, profileData) => {
+  const user = await User.findByIdAndUpdate(userId, profileData, {
+    new: true,
+  }).select('-password');
+  return user;
+};
+
 module.exports = {
   getMe,
+  updateProfile,
 };
