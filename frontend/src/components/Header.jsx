@@ -85,6 +85,16 @@ const Header = () => {
         >
           Products
         </Button>
+        {user && user.role === 'admin' && (
+          <Button
+            color="inherit"
+            component={Link}
+            to="/admin/dashboard"
+            sx={{ '&:hover': { color: '#00d9ff' } }}
+          >
+            Dashboard
+          </Button>
+        )}
         {user ? (
           <div>
             <IconButton onClick={handleMenu} color="inherit">
