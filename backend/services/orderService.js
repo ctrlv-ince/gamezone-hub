@@ -10,7 +10,11 @@ const getOrders = async () => {
 };
 
 const getOrderById = async (id) => {
-  return await Order.findById(id).populate('user', 'username');
+  const order = await Order.findById(id).populate('user', 'username');
+  if (!order) {
+    throw new Error('Order not found');
+  }
+  return order;
 };
 
 const getSalesData = async (startDate, endDate) => {

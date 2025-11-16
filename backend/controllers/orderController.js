@@ -21,11 +21,11 @@ const getOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const order = await orderService.getOrderById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
     res.json(order);
   } catch (error) {
+    if (error.message === 'Order not found') {
+      return res.status(404).json({ message: 'Order not found' });
+    }
     res.status(500).json({ message: error.message });
   }
 };
