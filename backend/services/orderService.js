@@ -1,32 +1,47 @@
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
+const Product = require('../models/Product');
 
 const createOrderFromCart = async (userId) => {
-  const cart = await Cart.findOne({ user: userId }).populate('items.product');
+  const cart = await Cart.findOne({ user: userId }).populate('cartItems.product');
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart || cart.cartItems.length === 0) {
     throw new Error('Cart is empty');
   }
 
-  const totalPrice = cart.items.reduce((total, item) => {
-    return total + item.product.price * item.quantity;
-  }, 0);
+  // Check stock availability for all items
+  for (const item of cart.cartItems) {
+    if (item.product.stock < item.quantity) {
+      throw new Error(`Insufficient stock for ${item.product.name}. Available: ${item.product.stock}, Requested: ${item.quantity}`);
+    }
+  }
 
   const order = new Order({
     user: userId,
-    items: cart.items.map((item) => ({
+    orderItems: cart.cartItems.map((item) => ({
       product: item.product._id,
       quantity: item.quantity,
+      price: item.product.price,
     })),
-    total: totalPrice,
   });
 
   await order.save();
 
-  cart.items = [];
+  // Update product stock
+  for (const item of cart.cartItems) {
+    await Product.findByIdAndUpdate(
+      item.product._id,
+      { $inc: { stock: -item.quantity } }
+    );
+  }
+
+  cart.cartItems = [];
   await cart.save();
 
-  return order;
+  const populatedOrder = await Order.findById(order._id).populate({
+    path: 'orderItems.product',
+  });
+  return populatedOrder;
 };
 
 const getOrders = async () => {
@@ -54,7 +69,7 @@ const getSalesData = async (startDate, endDate) => {
     {
       $group: {
         _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-        totalSales: { $sum: '$total' },
+        totalSales: { $sum: '$totalPrice' },
       },
     },
     {

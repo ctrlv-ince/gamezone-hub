@@ -75,7 +75,7 @@ const CartPage = () => {
         totalPrice: cartTotal,
       };
       const data = await createOrder(orderData);
-      navigate('/order-success', { state: { order: data.order } });
+      navigate('/order-success', { state: { order: data } });
     } catch (error) {
       console.error('Error creating order:', error);
       if (error.response?.status === 401) {
@@ -197,7 +197,7 @@ const CartPage = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flex: 1 }}>
                           <Box
                             component="img"
-                            src={item.product.image}
+                            src={item.product.images?.[0]?.url}
                             alt={item.product.name}
                             sx={{
                               width: 100,

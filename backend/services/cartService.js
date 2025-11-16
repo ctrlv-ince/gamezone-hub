@@ -15,9 +15,9 @@ const getCart = async (userId) => {
   if (!cart) {
     cart = new Cart({ user: userId, cartItems: [] });
     await cart.save();
+  } else {
+    await populateCart(cart);
   }
-
-  await populateCart(cart);
 
   // Clean up cart from deleted products
   const originalLength = cart.cartItems.length;

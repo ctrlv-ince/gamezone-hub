@@ -23,14 +23,17 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+orderSchema.virtual('totalPrice').get(function() {
+  return this.orderItems.reduce((total, item) => total + item.quantity * item.price, 0);
 });
 
 module.exports = mongoose.model('Order', orderSchema);
