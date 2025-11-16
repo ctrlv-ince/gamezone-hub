@@ -1,6 +1,8 @@
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
+const { sendOrderStatusUpdate } = require('./emailService');
+const { generateReceiptPdf } = require('../utils/pdfService');
 
 const createOrderFromCart = async (userId) => {
   const cart = await Cart.findOne({ user: userId }).populate('cartItems.product');
@@ -16,13 +18,18 @@ const createOrderFromCart = async (userId) => {
     }
   }
 
+  const orderItems = cart.cartItems.map((item) => ({
+    product: item.product._id,
+    quantity: item.quantity,
+    price: item.product.price,
+  }));
+
+  const totalPrice = orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
   const order = new Order({
     user: userId,
-    orderItems: cart.cartItems.map((item) => ({
-      product: item.product._id,
-      quantity: item.quantity,
-      price: item.product.price,
-    })),
+    orderItems,
+    totalPrice,
   });
 
   await order.save();
@@ -52,7 +59,12 @@ const getOrders = async (userId) => {
 };
 
 const getOrderById = async (id) => {
-  const order = await Order.findById(id).populate('user', 'username');
+  const order = await Order.findById(id)
+    .populate('user', 'username')
+    .populate({
+      path: 'orderItems.product',
+      select: 'name price images'
+    });
   if (!order) {
     throw new Error('Order not found');
   }
@@ -82,21 +94,26 @@ const getSalesData = async (startDate, endDate) => {
 };
 
 const updateOrderStatus = async (orderId, status) => {
-  const order = await Order.findByIdAndUpdate(
-    orderId,
-    { status },
-    { new: true }
-  );
-
+  const order = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
   if (!order) {
     throw new Error('Order not found');
   }
 
-  return order;
+  const populatedOrder = await Order.findById(order._id)
+    .populate('user', 'username email') 
+    .populate('orderItems.product'); 
+
+  const pdfBuffer = await generateReceiptPdf(populatedOrder);
+  await sendOrderStatusUpdate(populatedOrder.user.email, populatedOrder, pdfBuffer);
+
+  return populatedOrder;
 };
 
 const getAllOrders = async () => {
-  return await Order.find({}).populate('user', 'username email').sort({ createdAt: -1 });
+  return await Order.find({}).select('status createdAt totalPrice').populate('user', 'username email').populate({
+    path: 'orderItems.product',
+    select: 'name price images'
+  }).sort({ createdAt: -1 });
 };
 
 module.exports = {

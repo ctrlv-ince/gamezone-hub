@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -13,11 +13,17 @@ import {
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { addToCart } from '../services/cartService';
+import { UserContext } from '../context/UserContext';
 
 const ProductCard = ({ product }) => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const { user } = useContext(UserContext);
 
   const handleAddToCart = async () => {
+    if (!user) {
+      alert('Please log in to add items to your cart.');
+      return;
+    }
     try {
       await addToCart(product._id, 1);
       alert('Product added to cart!');

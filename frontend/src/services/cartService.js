@@ -8,7 +8,7 @@ const getCart = async () => {
 };
 
 const addToCart = async (productId, quantity) => {
-  console.log('Sending to backend:', { productId, quantity });
+  // console.log('Sending to backend:', { productId, quantity });
   const response = await api.post(API_URL, { productId, quantity });
   return response.data;
 };
