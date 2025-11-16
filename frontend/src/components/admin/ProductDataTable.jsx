@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { getAllProducts } from '../services/productService';
+import { getAllProducts } from '../../services/productService';
 
 const columns = [
   { field: 'name', headerName: 'Name', width: 150 },
