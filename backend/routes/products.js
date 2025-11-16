@@ -3,10 +3,11 @@ const router = express.Router();
 const {
   getAllProducts,
   getProductById,
+  createProduct,
 } = require('../controllers/productController');
-const { auth } = require('../middleware/jwt');
+const { auth, isAdmin } = require('../middleware/auth');
 
-
+router.post('/', auth, isAdmin, createProduct);
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
