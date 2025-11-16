@@ -36,9 +36,15 @@ const updateProduct = async (productId, productData) => {
   return updatedProduct;
 };
 
+const deleteProducts = async (productIds) => {
+  const result = await Product.deleteMany({ _id: { $in: productIds } });
+  return result;
+};
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
   updateProduct,
+  deleteProducts,
 };

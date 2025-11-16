@@ -11,6 +11,11 @@ export const getProductById = async (id) => {
   return response.data;
 };
 
+export const deleteProducts = async (ids) => {
+  const response = await api.delete(API_URL, { data: { ids } });
+  return response.data;
+};
+
 export const createProduct = async (productData) => {
   const response = await api.post(API_URL, productData);
   return response.data;

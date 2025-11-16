@@ -59,9 +59,24 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const deleteProducts = async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!ids || ids.length === 0) {
+      return res.status(400).json({ message: 'No product IDs provided' });
+    }
+    await productService.deleteProducts(ids);
+    res.json({ message: 'Products deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
+  deleteProducts,
 };

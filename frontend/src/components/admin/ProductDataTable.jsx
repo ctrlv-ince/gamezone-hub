@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Chip, Avatar, Tooltip, IconButton } from '@mui/material';
+import { Box, Chip, Avatar, Tooltip, IconButton, Checkbox } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { getAllProducts } from '../../services/productService';
 
-const ProductDataTable = ({ refreshKey, onEdit }) => {
+const ProductDataTable = ({
+  refreshKey,
+  onEdit,
+  selectedProducts,
+  onSelectAll,
+  onSelectOne
+}) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +31,25 @@ const ProductDataTable = ({ refreshKey, onEdit }) => {
   }, [refreshKey]);
 
   const columns = [
+    {
+      field: 'select',
+      headerName: '',
+      width: 50,
+      sortable: false,
+      renderHeader: () => (
+        <Checkbox
+          checked={products.length > 0 && selectedProducts.length === products.length}
+          indeterminate={selectedProducts.length > 0 && selectedProducts.length < products.length}
+          onChange={onSelectAll}
+        />
+      ),
+      renderCell: (params) => (
+        <Checkbox
+          checked={selectedProducts.includes(params.id)}
+          onChange={(event) => onSelectOne(event, params.id)}
+        />
+      ),
+    },
     {
       field: 'images',
       headerName: 'Images',
