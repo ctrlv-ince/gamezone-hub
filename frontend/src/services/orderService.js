@@ -8,3 +8,12 @@ export const createOrder = async (orderData) => {
     throw error.response.data;
   }
 };
+
+export const getUserOrders = async () => {
+  try {
+    const response = await api.get('/orders');
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

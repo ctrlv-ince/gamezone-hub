@@ -44,8 +44,11 @@ const createOrderFromCart = async (userId) => {
   return populatedOrder;
 };
 
-const getOrders = async () => {
-  return await Order.find().populate('user', 'username');
+const getOrders = async (userId) => {
+  return await Order.find({ user: userId }).populate({
+    path: 'orderItems.product',
+    select: 'name price images'
+  }).sort({ createdAt: -1 });
 };
 
 const getOrderById = async (id) => {
@@ -78,9 +81,29 @@ const getSalesData = async (startDate, endDate) => {
   ]);
 };
 
+const updateOrderStatus = async (orderId, status) => {
+  const order = await Order.findByIdAndUpdate(
+    orderId,
+    { status },
+    { new: true }
+  );
+
+  if (!order) {
+    throw new Error('Order not found');
+  }
+
+  return order;
+};
+
+const getAllOrders = async () => {
+  return await Order.find({}).populate('user', 'username email').sort({ createdAt: -1 });
+};
+
 module.exports = {
   createOrderFromCart,
   getOrders,
   getOrderById,
   getSalesData,
+  updateOrderStatus,
+  getAllOrders,
 };

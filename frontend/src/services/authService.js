@@ -6,12 +6,12 @@ const getMe = async () => {
 };
 
 const updateProfile = async (profileData) => {
-  const res = await api.put('/api/v1/auth/me/update', profileData);
+  const res = await api.put('/auth/me/update', profileData);
   return res.data;
 };
 
 const login = async (credentials) => {
-  const res = await api.post('/api/v1/auth/login', credentials);
+  const res = await api.post('/auth/login', credentials);
   return res.data;
 };
 

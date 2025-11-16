@@ -15,3 +15,19 @@ export const getSalesData = async (startDate, endDate) => {
     throw error.response.data;
   }
 };
+export const getAllOrders = async () => {
+  try {
+    const response = await api.get(`${API_URL}/all`);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+export const updateOrderStatus = async (orderId, status) => {
+  try {
+    const response = await api.put(`${API_URL}/${orderId}/status`, { status });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

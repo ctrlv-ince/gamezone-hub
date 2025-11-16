@@ -11,12 +11,14 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import UploadPage from './pages/UploadPage';
 import CartPage from './pages/CartPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProductManagementPage from './pages/admin/ProductManagementPage';
+import OrderManagementPage from './pages/admin/OrderManagementPage';
 
 function App() {
   return (
@@ -33,8 +35,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<CartPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/order-history" element={<OrderHistoryPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/products" element={<ProductManagementPage />} />
+            <Route path="/admin/orders" element={<OrderManagementPage />} />
             <Route path="/update-profile" element={<UpdateProfilePage />} />
           </Route>
         </Routes>

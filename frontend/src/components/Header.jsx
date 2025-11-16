@@ -122,6 +122,13 @@ const Header = () => {
               >
                 Update Profile
               </MenuItem>
+              <MenuItem
+                component={Link}
+                to="/order-history"
+                onClick={handleClose}
+              >
+                Order History
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </div>
