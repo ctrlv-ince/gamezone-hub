@@ -60,8 +60,13 @@ const Login = () => {
       );
       const { user } = userCredential;
       const idToken = await user.getIdToken();
-      sessionStorage.setItem('token', idToken);
-      login(userData);
+      localStorage.setItem('token', idToken);
+
+      // After email/password login, fetch the full user profile
+      const response = await api.get('/auth/me');
+      const userData = response.data;
+
+      login(userData, idToken);
       navigate('/');
     } catch (error) {
       console.error('Error signing in:', error);
@@ -72,14 +77,7 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(auth, provider);
-      const { user } = result;
-      const idToken = await user.getIdToken();
-      sessionStorage.setItem('token', idToken);
-
-
-      const userData = await authService.getMe();
-      login(userData);
+      await signInWithPopup(auth, provider);
       navigate('/');
     } catch (error) {
       console.error('Google Sign-In error:', error);

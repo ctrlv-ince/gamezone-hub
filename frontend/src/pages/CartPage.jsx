@@ -22,7 +22,9 @@ const CartPage = () => {
       try {
         const token = getToken();
         const response = await getCart(token);
-        setCartItems(response.data.items);
+        if (response.data) {
+          setCartItems(response.data.cartItems);
+        }
       } catch (error) {
         console.error('Error fetching cart items:', error);
       } finally {

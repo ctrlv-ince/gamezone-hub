@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -36,6 +36,7 @@ const RainbowText = styled('span')({
 
 const Header = () => {
   const { user, logout } = useContext(UserContext);
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -47,7 +48,7 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    logout();
+    logout(navigate);
     handleClose();
   };
 
@@ -87,7 +88,7 @@ const Header = () => {
         {user ? (
           <div>
             <IconButton onClick={handleMenu} color="inherit">
-              <Avatar alt={user.username} src={user.profilePicture} />
+              <Avatar alt={user.username} src={user.avatar} />
             </IconButton>
             <Menu
               id="menu-appbar"

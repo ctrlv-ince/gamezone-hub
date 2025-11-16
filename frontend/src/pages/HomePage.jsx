@@ -99,35 +99,6 @@ const HomePage = () => {
           </Box>
           <FeaturedProducts />
         </Box>
-
-        {/* All Products Section */}
-        <Box sx={{ mb: 6 }}>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            mb: 4,
-            position: 'relative'
-          }}>
-            <Box sx={{ 
-              width: '4px', 
-              height: '40px', 
-              background: 'linear-gradient(to bottom, #00d4ff, #8b00ff)',
-              mr: 2,
-              borderRadius: '2px'
-            }} />
-            <Typography 
-              variant="h3" 
-              sx={{ 
-                color: 'white',
-                fontWeight: 700,
-                fontSize: { xs: '1.8rem', md: '2.5rem' }
-              }}
-            >
-              All Products
-            </Typography>
-          </Box>
-          <ProductList />
-        </Box>
       </Container>
 
       <style>{`
