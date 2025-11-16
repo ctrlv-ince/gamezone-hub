@@ -93,7 +93,40 @@ const createProductReview = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+const updateReview = async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    const { id: productId, reviewId } = req.params;
+    const userId = req.user._id;
 
+    await productService.updateReview(
+      productId,
+      reviewId,
+      userId,
+      rating,
+      comment
+    );
+
+    res.json({ message: 'Review updated successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+const deleteReview = async (req, res) => {
+  try {
+    const { id: productId, reviewId } = req.params;
+    const userId = req.user._id;
+
+    await productService.deleteReview(productId, reviewId, userId);
+
+    res.json({ message: 'Review deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
 module.exports = {
   getAllProducts,
   getProductById,
@@ -101,4 +134,6 @@ module.exports = {
   updateProduct,
   deleteProducts,
   createProductReview,
+  updateReview,
+  deleteReview,
 };

@@ -14,7 +14,11 @@ import {
 } from '@mui/material';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import { getMyOrders } from '../services/orderService';
-import { createReview } from '../services/productService';
+import {
+  createReview,
+  updateReview,
+  deleteReview,
+} from '../services/productService';
 import { UserContext } from '../context/UserContext';
 import ReviewModal from '../components/ReviewModal';
 
@@ -24,6 +28,8 @@ const OrderHistoryPage = () => {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingReview, setEditingReview] = useState(null);
   const navigate = useNavigate();
   const { user, loading: userLoading } = useContext(UserContext);
 
@@ -68,6 +74,41 @@ const OrderHistoryPage = () => {
       fetchOrders(); // Refresh orders to update review status
     } catch (error) {
       console.error('Error submitting review:', error);
+    }
+  };
+
+  const handleOpenEditModal = (product, review) => {
+    setSelectedProduct(product);
+    setEditingReview(review);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedProduct(null);
+    setEditingReview(null);
+    setEditModalOpen(false);
+  };
+
+  const handleEditSubmit = async (reviewData) => {
+    if (!selectedProduct || !editingReview) return;
+
+    try {
+      await updateReview(selectedProduct._id, editingReview._id, reviewData);
+      handleCloseEditModal();
+      fetchOrders();
+    } catch (error) {
+      console.error('Error updating review:', error);
+    }
+  };
+
+  const handleDeleteReview = async (productId, reviewId) => {
+    if (window.confirm('Are you sure you want to delete this review?')) {
+      try {
+        await deleteReview(productId, reviewId);
+        fetchOrders();
+      } catch (error) {
+        console.error('Error deleting review:', error);
+      }
     }
   };
 
@@ -306,26 +347,88 @@ const OrderHistoryPage = () => {
                            >
                              ${(item.product.price * item.quantity).toFixed(2)}
                            </Typography>
-                           {order.status === 'Completed' && !item.isReviewed && (
-                             <Button
-                               size="small"
-                               onClick={() => handleOpenReviewModal(item.product, order._id)}
-                               sx={{
-                                 mt: 1,
-                                 background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-                                 color: 'white',
-                                 fontWeight: 700,
-                                 fontSize: '0.8rem',
-                                 padding: '6px 12px',
-                                 borderRadius: '8px',
-                                 '&:hover': {
-                                   opacity: 0.9,
-                                 },
-                               }}
-                             >
-                               Leave Review
-                             </Button>
-                           )}
+                           {order.status === 'Completed' && (() => {
+                              const userReview = user && item.product.reviews
+                                ? item.product.reviews.find((r) => r.user === user._id)
+                                : null;
+
+                              return (
+                                <Box sx={{ mt: 1, display: 'flex', gap: 1 }}>
+                                  {userReview ? (
+                                    <>
+                                      <Button
+                                        size="small"
+                                        onClick={() =>
+                                          handleOpenEditModal(
+                                            item.product,
+                                            userReview
+                                          )
+                                        }
+                                        sx={{
+                                          background:
+                                            'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                                          color: 'white',
+                                          fontWeight: 700,
+                                          fontSize: '0.8rem',
+                                          padding: '6px 12px',
+                                          borderRadius: '8px',
+                                          '&:hover': {
+                                            opacity: 0.9,
+                                          },
+                                        }}
+                                      >
+                                        Edit Review
+                                      </Button>
+                                      <Button
+                                        size="small"
+                                        onClick={() =>
+                                          handleDeleteReview(
+                                            item.product._id,
+                                            userReview._id
+                                          )
+                                        }
+                                        sx={{
+                                          background:
+                                            'linear-gradient(45deg, #f44336 30%, #ff6e6e 90%)',
+                                          color: 'white',
+                                          fontWeight: 700,
+                                          fontSize: '0.8rem',
+                                          padding: '6px 12px',
+                                          borderRadius: '8px',
+                                          '&:hover': {
+                                            opacity: 0.9,
+                                          },
+                                        }}
+                                      >
+                                        Delete Review
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <Button
+                                      size="small"
+                                      onClick={() =>
+                                        handleOpenReviewModal(item.product, order._id)
+                                      }
+                                      sx={{
+                                        mt: 1,
+                                        background:
+                                          'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                                        color: 'white',
+                                        fontWeight: 700,
+                                        fontSize: '0.8rem',
+                                        padding: '6px 12px',
+                                        borderRadius: '8px',
+                                        '&:hover': {
+                                          opacity: 0.9,
+                                        },
+                                      }}
+                                    >
+                                      Leave Review
+                                    </Button>
+                                  )}
+                                </Box>
+                              );
+                            })()}
                          </Box>
                        </Box>
                      ))}
@@ -341,6 +444,14 @@ const OrderHistoryPage = () => {
          onClose={handleCloseReviewModal}
          onSubmit={handleReviewSubmit}
        />
+       {editingReview && (
+         <ReviewModal
+           open={editModalOpen}
+           onClose={handleCloseEditModal}
+           onSubmit={handleEditSubmit}
+           review={editingReview}
+         />
+       )}
      </Container>
    </Box>
  );

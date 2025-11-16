@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -13,9 +13,19 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import StarIcon from '@mui/icons-material/Star';
 
-const ReviewModal = ({ open, onClose, onSubmit }) => {
+const ReviewModal = ({ open, onClose, onSubmit, review }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    if (review) {
+      setRating(review.rating);
+      setComment(review.comment);
+    } else {
+      setRating(0);
+      setComment('');
+    }
+  }, [review, open]);
 
   const handleSubmit = () => {
     if (rating === 0) {
@@ -23,8 +33,6 @@ const ReviewModal = ({ open, onClose, onSubmit }) => {
       return;
     }
     onSubmit({ rating, comment });
-    setRating(0);
-    setComment('');
     onClose();
   };
 
@@ -89,7 +97,7 @@ const ReviewModal = ({ open, onClose, onSubmit }) => {
                   letterSpacing: '0.5px'
                 }}
               >
-                Leave a Review
+                {review ? 'Edit Your Review' : 'Leave a Review'}
               </Typography>
             </Box>
             <IconButton
@@ -248,7 +256,7 @@ const ReviewModal = ({ open, onClose, onSubmit }) => {
                 transition: 'all 0.3s ease'
               }}
             >
-              Submit Review
+              {review ? 'Update Review' : 'Submit Review'}
             </Button>
             <Button
               onClick={handleClose}

@@ -71,6 +71,7 @@ const createProductReview = async (
       rating: Number(rating),
       comment,
       user: user._id,
+      order: orderId,
     };
 
     product.reviews.push(review);
@@ -97,7 +98,75 @@ const createProductReview = async (
     throw new Error('Product not found');
   }
 };
+const updateReview = async (productId, reviewId, userId, rating, comment) => {
+  const product = await Product.findById(productId);
 
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  const review = product.reviews.id(reviewId);
+
+  if (!review) {
+    throw new Error('Review not found');
+  }
+
+  if (review.user.toString() !== userId.toString()) {
+    throw new Error('User not authorized to update this review');
+  }
+
+  review.rating = rating;
+  review.comment = comment;
+
+  product.rating =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.reviews.length;
+
+  await product.save();
+  return product;
+};
+
+const deleteReview = async (productId, reviewId, userId) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  const review = product.reviews.id(reviewId);
+
+  if (!review) {
+    throw new Error('Review not found');
+  }
+
+  if (review.user.toString() !== userId.toString()) {
+    throw new Error('User not authorized to delete this review');
+  }
+
+  const order = await Order.findById(review.order);
+
+  if (order) {
+    const orderItem = order.orderItems.find(
+      (item) => item.product.toString() === productId
+    );
+
+    if (orderItem) {
+      orderItem.isReviewed = false;
+      await order.save();
+    }
+  }
+
+  product.reviews.pull(reviewId);
+  product.numReviews = product.reviews.length;
+  product.rating =
+    product.reviews.length > 0
+      ? product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length
+      : 0;
+
+  await product.save();
+  return product;
+};
 module.exports = {
   getProducts,
   getProduct,
@@ -105,4 +174,6 @@ module.exports = {
   updateProduct,
   deleteProducts,
   createProductReview,
+  updateReview,
+  deleteReview,
 };

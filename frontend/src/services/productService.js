@@ -31,3 +31,17 @@ export const createReview = async (productId, reviewData) => {
   );
   return response.data;
 };
+export const updateReview = async (productId, reviewId, reviewData) => {
+  const response = await api.put(
+    `${API_URL}/${productId}/reviews/${reviewId}`,
+    reviewData
+  );
+  return response.data;
+};
+
+export const deleteReview = async (productId, reviewId) => {
+  const response = await api.delete(
+    `${API_URL}/${productId}/reviews/${reviewId}`
+  );
+  return response.data;
+};
