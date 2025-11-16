@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import UploadPage from './pages/UploadPage';
 import CartPage from './pages/CartPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/upload" element={<UploadPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/order-success" element={<OrderSuccessPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/products" element={<ProductManagementPage />} />
             <Route path="/update-profile" element={<UpdateProfilePage />} />

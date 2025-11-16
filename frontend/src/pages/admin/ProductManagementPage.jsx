@@ -1,23 +1,40 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Container,
+  Typography,
   Button
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ProductDataTable from '../../components/admin/ProductDataTable';
 import CreateProductModal from '../../components/admin/CreateProductModal';
 import EditProductModal from '../../components/admin/EditProductModal';
-import { deleteProducts } from '../../services/productService';
+import { deleteProducts, getAllProducts } from '../../services/productService';
 import { toast } from 'react-toastify';
 
 const ProductManagementPage = () => {
   const [open, setOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const response = await getAllProducts();
+        setProducts(response);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
@@ -77,8 +94,16 @@ const ProductManagementPage = () => {
     setIsEditModalOpen(false);
   };
 
-  const triggerRefresh = () => {
-    setRefreshKey(oldKey => oldKey + 1);
+  const triggerRefresh = async () => {
+    setLoading(true);
+    try {
+      const response = await getAllProducts();
+      setProducts(response);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleProductCreated = () => {
@@ -196,7 +221,8 @@ const ProductManagementPage = () => {
 
         {/* Product Table */}
         <ProductDataTable
-          refreshKey={refreshKey}
+          products={products}
+          loading={loading}
           onEdit={handleEditOpen}
           selectedProducts={selectedProductIds}
           onSelectAll={handleSelectAll}

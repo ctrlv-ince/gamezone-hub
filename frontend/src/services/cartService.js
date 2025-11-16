@@ -7,8 +7,9 @@ const getCart = async () => {
   return response.data;
 };
 
-const addToCart = async (item) => {
-  const response = await api.post(API_URL, item);
+const addToCart = async (productId, quantity) => {
+  console.log('Sending to backend:', { productId, quantity });
+  const response = await api.post(API_URL, { productId, quantity });
   return response.data;
 };
 
@@ -17,4 +18,9 @@ const removeFromCart = async (productId) => {
   return response.data;
 };
 
-export { getCart, addToCart, removeFromCart };
+const updateItemQuantity = async (productId, quantity) => {
+  const response = await api.put(`${API_URL}/${productId}`, { quantity });
+  return response.data;
+};
+
+export { getCart, addToCart, removeFromCart, updateItemQuantity };

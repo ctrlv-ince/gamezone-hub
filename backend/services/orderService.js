@@ -1,8 +1,32 @@
 const Order = require('../models/Order');
+const Cart = require('../models/Cart');
 
-const createOrder = async (orderData) => {
-  const order = new Order(orderData);
-  return await order.save();
+const createOrderFromCart = async (userId) => {
+  const cart = await Cart.findOne({ user: userId }).populate('items.product');
+
+  if (!cart || cart.items.length === 0) {
+    throw new Error('Cart is empty');
+  }
+
+  const totalPrice = cart.items.reduce((total, item) => {
+    return total + item.product.price * item.quantity;
+  }, 0);
+
+  const order = new Order({
+    user: userId,
+    items: cart.items.map((item) => ({
+      product: item.product._id,
+      quantity: item.quantity,
+    })),
+    total: totalPrice,
+  });
+
+  await order.save();
+
+  cart.items = [];
+  await cart.save();
+
+  return order;
 };
 
 const getOrders = async () => {
@@ -40,7 +64,7 @@ const getSalesData = async (startDate, endDate) => {
 };
 
 module.exports = {
-  createOrder,
+  createOrderFromCart,
   getOrders,
   getOrderById,
   getSalesData,

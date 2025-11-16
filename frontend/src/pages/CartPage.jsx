@@ -1,46 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Button, 
-  Card, 
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Container,
+  Typography,
+  Button,
+  Card,
   CardContent,
   CircularProgress,
   Grid,
-  Divider
+  Divider,
+  TextField,
+  IconButton
 } from '@mui/material';
-import { getCart, removeFromCart as removeFromCartService } from '../services/cartService';
-import { getToken } from '../utils/auth';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { getCart, removeFromCart as removeFromCartService, updateItemQuantity } from '../services/cartService';
+import { createOrder } from '../services/orderService';
+import { UserContext } from '../context/UserContext';
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { user, loading: userLoading } = useContext(UserContext);
 
   useEffect(() => {
+    if (userLoading) return;
+
     const fetchCartItems = async () => {
       try {
-        const token = getToken();
-        const response = await getCart(token);
-        if (response.data) {
-          setCartItems(response.data.cartItems);
+        const response = await getCart();
+        if (response) {
+          setCartItems(response.cartItems);
         }
       } catch (error) {
         console.error('Error fetching cart items:', error);
+        if (error.response?.status === 401) {
+          navigate('/login');
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchCartItems();
-  }, []);
+  }, [userLoading]);
+
+  const handleQuantityChange = async (productId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    try {
+      const updatedCart = await updateItemQuantity(productId, newQuantity);
+      setCartItems(updatedCart.cartItems);
+    } catch (error) {
+      console.error('Error updating item quantity:', error);
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
+    }
+  };
 
   const cartTotal = cartItems.reduce(
     (total, item) => total + item.product.price * item.quantity,
     0
   );
 
+  const handleCheckout = async () => {
+    try {
+      const orderData = {
+        items: cartItems.map((item) => ({
+          product: item.product._id,
+          quantity: item.quantity,
+        })),
+        totalPrice: cartTotal,
+      };
+      const data = await createOrder(orderData);
+      navigate('/order-success', { state: { order: data.order } });
+    } catch (error) {
+      console.error('Error creating order:', error);
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
+    }
+  };
+
   return (
-    <Box sx={{ 
+    <Box sx={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%)',
       py: 6
@@ -86,7 +131,7 @@ const CartPage = () => {
           </Typography>
         </Box>
 
-        {loading ? (
+        {loading || userLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
             <CircularProgress 
               sx={{ 
@@ -194,11 +239,53 @@ const CartPage = () => {
                             >
                               Quantity: {item.quantity}
                             </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                              <IconButton
+                                size="small"
+                                sx={{ color: '#00d4ff' }}
+                                onClick={() => handleQuantityChange(item.product._id, item.quantity - 1)}
+                              >
+                                <RemoveCircleOutlineIcon />
+                              </IconButton>
+                              <TextField
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => handleQuantityChange(item.product._id, parseInt(e.target.value, 10))}
+                                sx={{
+                                  width: '60px',
+                                  mx: 0.5,
+                                  '& .MuiInputBase-input': {
+                                    textAlign: 'center',
+                                    color: 'white',
+                                    padding: '8px',
+                                  },
+                                  '& .MuiOutlinedInput-root': {
+                                    '& fieldset': {
+                                      borderColor: 'rgba(139, 0, 255, 0.3)',
+                                    },
+                                    '&:hover fieldset': {
+                                      borderColor: 'rgba(139, 0, 255, 0.6)',
+                                    },
+                                    '&.Mui-focused fieldset': {
+                                      borderColor: '#8b00ff',
+                                    },
+                                  },
+                                }}
+                                inputProps={{ min: 1 }}
+                              />
+                              <IconButton
+                                size="small"
+                                sx={{ color: '#00d4ff' }}
+                                onClick={() => handleQuantityChange(item.product._id, item.quantity + 1)}
+                              >
+                                <AddCircleOutlineIcon />
+                              </IconButton>
+                            </Box>
                           </Box>
                         </Box>
-                        <Box sx={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
                           gap: 2,
                           width: { xs: '100%', sm: 'auto' },
                           justifyContent: { xs: 'space-between', sm: 'flex-end' }
@@ -215,11 +302,13 @@ const CartPage = () => {
                           <Button
                             onClick={async () => {
                               try {
-                                const token = getToken();
-                                await removeFromCartService(item.product._id, token);
+                                await removeFromCartService(item.product._id);
                                 setCartItems(cartItems.filter((i) => i.product._id !== item.product._id));
                               } catch (error) {
                                 console.error('Error removing item from cart:', error);
+                                if (error.response?.status === 401) {
+                                  navigate('/login');
+                                }
                               }
                             }}
                             variant="outlined"
@@ -277,19 +366,11 @@ const CartPage = () => {
                         ${cartTotal.toFixed(2)}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                      <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Shipping
-                      </Typography>
-                      <Typography sx={{ color: 'white', fontWeight: 600 }}>
-                        $5.00
-                      </Typography>
-                    </Box>
-                    <Divider 
-                      sx={{ 
-                        my: 2, 
-                        borderColor: 'rgba(139, 0, 255, 0.2)' 
-                      }} 
+                    <Divider
+                      sx={{
+                        my: 2,
+                        borderColor: 'rgba(139, 0, 255, 0.2)'
+                      }}
                     />
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="h6" sx={{ color: 'white', fontWeight: 700 }}>
@@ -302,12 +383,13 @@ const CartPage = () => {
                           fontWeight: 700 
                         }}
                       >
-                        ${(cartTotal + 5).toFixed(2)}
+                        ${cartTotal.toFixed(2)}
                       </Typography>
                     </Box>
                   </Box>
 
                   <Button
+                    onClick={handleCheckout}
                     variant="contained"
                     fullWidth
                     sx={{

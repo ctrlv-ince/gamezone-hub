@@ -115,8 +115,7 @@ const ProductDetailsPage = () => {
 
   const handleAddToCart = async () => {
     try {
-      const token = getToken();
-      await addToCartService({ productId: product._id, quantity }, token);
+      await addToCartService(product._id, quantity);
       alert('Product added to cart!');
     } catch (error) {
       console.error('Error adding to cart:', error);
