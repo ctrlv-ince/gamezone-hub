@@ -13,8 +13,16 @@ const getProduct = async (productId) => {
   return product;
 };
 
-const createProduct = async (productData) => {
-  const product = new Product(productData);
+const createProduct = async (productData, imageUrls) => {
+  const images = imageUrls.map((url) => {
+    const public_id = url.split('/').pop().split('.')[0];
+    return { public_id, url };
+  });
+
+  const product = new Product({
+    ...productData,
+    images,
+  });
   await product.save();
   return product;
 };

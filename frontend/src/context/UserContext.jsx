@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { onIdTokenChanged } from 'firebase/auth';
 import { auth } from '../config/firebase';
-import api from '../utils/api';
+import api from '../services/api';
 
 export const UserContext = createContext();
 

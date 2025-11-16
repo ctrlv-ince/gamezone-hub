@@ -17,7 +17,7 @@ import {
 import { auth } from '../config/firebase';
 import authService from '../services/authService';
 import { UserContext } from '../context/UserContext';
-import api from '../utils/api';
+import api from '../services/api';
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
   position: 'relative',

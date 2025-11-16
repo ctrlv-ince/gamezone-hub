@@ -32,6 +32,16 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
+    enum: [
+      'PS4 Games',
+      'Xbox Games',
+      'Consoles',
+      'Nintendo Switch Games',
+      'Accessories',
+      'PC Games',
+      'PS5 Games',
+      'Digital Games',
+    ],
   },
   stock: {
     type: Number,

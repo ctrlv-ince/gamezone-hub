@@ -1,9 +1,7 @@
 import api from './api';
 
-const API_URL = '/upload';
-
 export const uploadImage = async (formData) => {
-  const response = await api.post(API_URL, formData, {
+  const response = await api.post('/upload', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
