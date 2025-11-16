@@ -73,10 +73,32 @@ const deleteProducts = async (req, res) => {
   }
 };
 
+const createProductReview = async (req, res) => {
+  try {
+    const { rating, comment, orderId } = req.body;
+    const productId = req.params.id;
+    const user = req.user;
+
+    await productService.createProductReview(
+      productId,
+      user,
+      rating,
+      comment,
+      orderId
+    );
+
+    res.status(201).json({ message: 'Review added successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProducts,
+  createProductReview,
 };

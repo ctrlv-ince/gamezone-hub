@@ -10,23 +10,73 @@ import {
   Grid,
   Divider,
   Chip,
+  Button,
 } from '@mui/material';
 import ReceiptIcon from '@mui/icons-material/Receipt';
-import { getUserOrders } from '../services/orderService';
+import { getMyOrders } from '../services/orderService';
+import { createReview } from '../services/productService';
 import { UserContext } from '../context/UserContext';
+import ReviewModal from '../components/ReviewModal';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
   const navigate = useNavigate();
   const { user, loading: userLoading } = useContext(UserContext);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await getMyOrders();
+      if (response) {
+        setOrders(response);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      if (error.response?.status === 401) {
+        navigate('/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userLoading) return;
+    fetchOrders();
+  }, [userLoading]);
+
+  const handleOpenReviewModal = (product, orderId) => {
+    setSelectedProduct(product);
+    setSelectedOrderId(orderId);
+    setReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setSelectedProduct(null);
+    setReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = async (reviewData) => {
+    if (!selectedProduct) return;
+
+    try {
+      await createReview(selectedProduct._id, { ...reviewData, orderId: selectedOrderId });
+      handleCloseReviewModal();
+      fetchOrders(); // Refresh orders to update review status
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
+  };
 
   useEffect(() => {
     if (userLoading) return;
 
     const fetchOrders = async () => {
       try {
-        const response = await getUserOrders();
+        const response = await getMyOrders();
         if (response) {
           setOrders(response);
         }
@@ -163,6 +213,16 @@ const OrderHistoryPage = () => {
                         </Box>
                       </Box>
                       <Chip
+                        label={order.status.toUpperCase()}
+                        sx={{
+                          background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)', // Example gradient, adjust as needed
+                          color: 'white',
+                          fontWeight: 700,
+                          fontSize: '0.8rem',
+                          mr: 1,
+                        }}
+                      />
+                      <Chip
                         label={`$${order.totalPrice.toFixed(2)}`}
                         sx={{
                           background: 'rgba(0, 212, 255, 0.1)',
@@ -235,27 +295,55 @@ const OrderHistoryPage = () => {
                               </Typography>
                             </Box>
                           </Box>
-                          <Typography
-                            sx={{
-                              color: '#00d4ff',
-                              fontWeight: 700,
-                              fontSize: '1rem'
-                            }}
-                          >
-                            ${(item.product.price * item.quantity).toFixed(2)}
-                          </Typography>
-                        </Box>
-                      ))}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Container>
-    </Box>
-  );
+                          <Box>
+                           <Typography
+                             sx={{
+                               color: '#00d4ff',
+                               fontWeight: 700,
+                               fontSize: '1rem',
+                               textAlign: 'right',
+                             }}
+                           >
+                             ${(item.product.price * item.quantity).toFixed(2)}
+                           </Typography>
+                           {order.status === 'Completed' && !item.isReviewed && (
+                             <Button
+                               size="small"
+                               onClick={() => handleOpenReviewModal(item.product, order._id)}
+                               sx={{
+                                 mt: 1,
+                                 background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                                 color: 'white',
+                                 fontWeight: 700,
+                                 fontSize: '0.8rem',
+                                 padding: '6px 12px',
+                                 borderRadius: '8px',
+                                 '&:hover': {
+                                   opacity: 0.9,
+                                 },
+                               }}
+                             >
+                               Leave Review
+                             </Button>
+                           )}
+                         </Box>
+                       </Box>
+                     ))}
+                   </Box>
+                 </CardContent>
+               </Card>
+             </Grid>
+           ))}
+         </Grid>
+       )}
+       <ReviewModal
+         open={reviewModalOpen}
+         onClose={handleCloseReviewModal}
+         onSubmit={handleReviewSubmit}
+       />
+     </Container>
+   </Box>
+ );
 };
 
 export default OrderHistoryPage;

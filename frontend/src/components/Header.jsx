@@ -124,7 +124,7 @@ const Header = () => {
               </MenuItem>
               <MenuItem
                 component={Link}
-                to="/order-history"
+                to="/orders"
                 onClick={handleClose}
               >
                 Order History

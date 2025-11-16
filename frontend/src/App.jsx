@@ -35,7 +35,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/cart" element={<CartPage />} />
             <Route path="/order-success" element={<OrderSuccessPage />} />
-            <Route path="/order-history" element={<OrderHistoryPage />} />
+            <Route path="/orders" element={<OrderHistoryPage />} />
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/products" element={<ProductManagementPage />} />
             <Route path="/admin/orders" element={<OrderManagementPage />} />
