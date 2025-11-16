@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
-import { createProduct } from '../services/productService';
+import { createProduct } from '../../services/productService';
 
 const style = {
   position: 'absolute',

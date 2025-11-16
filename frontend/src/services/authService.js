@@ -10,4 +10,9 @@ const updateProfile = async (profileData) => {
   return res.data;
 };
 
-export default { getMe, updateProfile };
+const login = async (credentials) => {
+  const res = await api.post('/api/v1/auth/login', credentials);
+  return res.data;
+};
+
+export default { getMe, updateProfile, login };

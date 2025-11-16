@@ -23,7 +23,6 @@ const googleSignIn = async (idToken) => {
       firebaseUid: uid,
     });
   } else {
-    // User exists, update their info
     if (!user.firebaseUid) {
       user.firebaseUid = uid;
     }
@@ -64,9 +63,29 @@ const login = async (loginIdentifier, password) => {
     throw new Error('Invalid credentials');
   }
 
-  const token = generateToken(user);
+  if (!user.firebaseUid) {
+    try {
+      const firebaseUser = await admin.auth().createUser({
+        email: user.email,
+        password: password,
+      });
+      user.firebaseUid = firebaseUser.uid;
+      await user.save();
+    } catch (error) {
+      // If user already exists in firebase, try to get the user and update the local db
+      if (error.code === 'auth/email-already-exists') {
+        const firebaseUser = await admin.auth().getUserByEmail(user.email);
+        user.firebaseUid = firebaseUser.uid;
+        await user.save();
+      } else {
+        throw error;
+      }
+    }
+  }
 
-  return { token, user };
+  const customToken = await admin.auth().createCustomToken(user.firebaseUid);
+
+  return customToken;
 };
 
 const getMe = async (userId) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ProductDataTable from '../components/ProductDataTable';
-import CreateProductModal from '../components/CreateProductModal';
+import ProductDataTable from '../../components/admin/ProductDataTable';
+import CreateProductModal from '../../components/admin/CreateProductModal';
 import { Button } from '@mui/material';
 
 const ProductManagementPage = () => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getSalesData } from '../services/adminService';
+import { getSalesData } from '../../services/adminService';
 import {
   LineChart,
   Line,

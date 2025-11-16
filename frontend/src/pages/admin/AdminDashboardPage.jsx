@@ -1,5 +1,5 @@
 import React from 'react';
-import SalesChart from '../components/SalesChart';
+import SalesChart from '../../components/admin/SalesChart';
 
 const AdminDashboardPage = () => {
   return (

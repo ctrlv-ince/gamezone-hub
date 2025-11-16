@@ -10,12 +10,12 @@ import Register from './pages/Register';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import UploadPage from './pages/UploadPage';
 import CartPage from './pages/CartPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ProductManagementPage from './pages/ProductManagementPage';
+import ProductManagementPage from './pages/admin/ProductManagementPage';
 
 function App() {
   return (

@@ -12,6 +12,7 @@ import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithCustomToken,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import authService from '../services/authService';
@@ -53,21 +54,21 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const { user } = userCredential;
-      const idToken = await user.getIdToken();
+      const response = await authService.login({ loginIdentifier: email, password });
+      const { customToken } = response;
+      await signInWithCustomToken(auth, customToken);
+      const idToken = await auth.currentUser.getIdToken();
       localStorage.setItem('token', idToken);
 
-      // After email/password login, fetch the full user profile
-      const response = await api.get('/auth/me');
-      const userData = response.data;
+      const userResponse = await api.get('/auth/me');
+      const userData = userResponse.data;
 
       login(userData, idToken);
-      navigate('/');
+      if (userData.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       console.error('Error signing in:', error);
       // TODO: Show error message to user

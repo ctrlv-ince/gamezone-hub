@@ -59,8 +59,8 @@ const login = async (req, res) => {
   }
 
   try {
-    const { token, user } = await authService.login(loginIdentifier, password);
-    res.json({ token, user });
+    const customToken = await authService.login(loginIdentifier, password);
+    res.json({ customToken });
   } catch (err) {
     console.error('Login error:', err.message);
     if (err.message === 'Invalid credentials') {
