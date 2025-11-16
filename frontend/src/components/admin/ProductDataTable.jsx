@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Chip, Avatar, Tooltip } from '@mui/material';
+import { Box, Chip, Avatar, Tooltip, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { getAllProducts } from '../../services/productService';
 
-const ProductDataTable = ({ refreshKey }) => {
+const ProductDataTable = ({ refreshKey, onEdit }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -197,10 +198,31 @@ const ProductDataTable = ({ refreshKey }) => {
         );
       }
     },
+    {
+      field: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      sortable: false,
+      renderCell: (params) => (
+        <Tooltip title="Edit Product" arrow>
+          <IconButton
+            onClick={() => onEdit(params.row)}
+            sx={{
+              color: '#00d4ff',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 212, 255, 0.1)'
+              }
+            }}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      )
+    }
   ];
 
   return (
-    <Box sx={{ 
+    <Box sx={{
       width: '100%',
       '& .MuiDataGrid-root': {
         border: '1px solid rgba(139, 0, 255, 0.3)',

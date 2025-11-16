@@ -27,8 +27,18 @@ const createProduct = async (productData, imageUrls) => {
   return product;
 };
 
+const updateProduct = async (productId, productData) => {
+  const updatedProduct = await Product.findByIdAndUpdate(
+    productId,
+    productData,
+    { new: true }
+  );
+  return updatedProduct;
+};
+
 module.exports = {
   getProducts,
   getProduct,
   createProduct,
+  updateProduct,
 };

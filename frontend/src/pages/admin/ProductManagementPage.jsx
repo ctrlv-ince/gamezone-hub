@@ -8,9 +8,12 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import ProductDataTable from '../../components/admin/ProductDataTable';
 import CreateProductModal from '../../components/admin/CreateProductModal';
+import EditProductModal from '../../components/admin/EditProductModal';
 
 const ProductManagementPage = () => {
   const [open, setOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleOpen = () => {
@@ -19,6 +22,16 @@ const ProductManagementPage = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleEditOpen = (product) => {
+    setSelectedProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setSelectedProduct(null);
+    setIsEditModalOpen(false);
   };
 
   const triggerRefresh = () => {
@@ -104,10 +117,23 @@ const ProductManagementPage = () => {
         </Box>
 
         {/* Product Table */}
-        <ProductDataTable refreshKey={refreshKey} />
+        <ProductDataTable refreshKey={refreshKey} onEdit={handleEditOpen} />
 
         {/* Create Product Modal */}
         <CreateProductModal open={open} handleClose={handleClose} onProductCreated={triggerRefresh} />
+
+        {/* Edit Product Modal */}
+        {selectedProduct && (
+          <EditProductModal
+            open={isEditModalOpen}
+            handleClose={handleEditClose}
+            product={selectedProduct}
+            onProductUpdated={() => {
+              triggerRefresh();
+              handleEditClose();
+            }}
+          />
+        )}
       </Container>
     </Box>
   );

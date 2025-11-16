@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Box,
@@ -15,9 +15,9 @@ import {
   Backdrop
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { createProduct } from '../../services/productService';
 import { uploadImage } from '../../services/uploadService';
+import { updateProduct } from '../../services/productService';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const categories = [
   'PS4 Games',
@@ -30,7 +30,7 @@ const categories = [
   'Digital Games',
 ];
 
-const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
+const EditProductModal = ({ open, handleClose, product, onProductUpdated }) => {
   const [productData, setProductData] = useState({
     name: '',
     description: '',
@@ -40,6 +40,19 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
     images: [],
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
+
+  useEffect(() => {
+    if (product) {
+      setProductData({
+        name: product.name || '',
+        description: product.description || '',
+        price: product.price || '',
+        category: product.category || '',
+        stock: product.stock || '',
+        images: product.images || [],
+      });
+    }
+  }, [product]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,40 +67,21 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
   };
 
   const handleRemoveImage = (index) => {
-    const newFiles = [...selectedFiles];
-    newFiles.splice(index, 1);
-    setSelectedFiles(newFiles);
+    const newImages = [...productData.images];
+    newImages.splice(index, 1);
+    setProductData((prevData) => ({
+      ...prevData,
+      images: newImages,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let imageUrls = [];
-      if (selectedFiles.length > 0) {
-        const formData = new FormData();
-        for (let i = 0; i < selectedFiles.length; i++) {
-          formData.append('images', selectedFiles[i]);
-        }
-        const response = await uploadImage(formData);
-        imageUrls = response.urls;
-      }
-
-      const finalProductData = { ...productData, images: imageUrls };
-      await createProduct(finalProductData);
-
-      setProductData({
-        name: '',
-        description: '',
-        price: '',
-        category: '',
-        stock: '',
-        images: [],
-      });
-      setSelectedFiles([]);
-      handleClose();
-      onProductCreated();
+      const updatedProduct = await updateProduct(product._id, productData);
+      onProductUpdated(updatedProduct);
     } catch (error) {
-      console.error('Failed to create product', error);
+      console.error('Error updating product:', error);
     }
   };
 
@@ -160,7 +154,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                   letterSpacing: '0.5px'
                 }}
               >
-                Create New Product
+                Edit Product
               </Typography>
             </Box>
             <IconButton
@@ -453,17 +447,11 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                     width: '100%'
                   }}
                 />
-                {selectedFiles.length > 0 && (
+                {productData.images.length > 0 && (
                   <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {selectedFiles.map((file, index) => (
+                    {productData.images.map((image, index) => (
                       <Box key={index} sx={{ position: 'relative' }}>
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`Preview ${index + 1}`}
-                          width="100"
-                          height="100"
-                          style={{ objectFit: 'cover', borderRadius: '8px' }}
-                        />
+                        <img src={image.url} alt={`Product image ${index + 1}`} width="100" height="100" style={{ objectFit: 'cover', borderRadius: '8px' }} />
                         <IconButton
                           size="small"
                           onClick={() => handleRemoveImage(index)}
@@ -508,7 +496,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                       transition: 'all 0.3s ease'
                     }}
                   >
-                    Create Product
+                    Save Changes
                   </Button>
                   <Button
                     onClick={handleClose}
@@ -537,4 +525,4 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
   );
 };
 
-export default CreateProductModal;
+export default EditProductModal;
