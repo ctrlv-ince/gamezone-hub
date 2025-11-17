@@ -1,4 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -9,7 +12,6 @@ import {
   styled,
 } from '@mui/material';
 import {
-  signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   signInWithCustomToken,
@@ -18,6 +20,11 @@ import { auth } from '../config/firebase';
 import authService from '../services/authService';
 import { UserContext } from '../context/UserContext';
 import api from '../services/api';
+
+const validationSchema = yup.object({
+  email: yup.string().email('Enter a valid email').required('Email is required'),
+  password: yup.string().min(8, 'Password should be of minimum 8 characters length').required('Password is required'),
+});
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -46,15 +53,20 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { login } = useContext(UserContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: 'onSubmit',
+  });
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      const response = await authService.login({ loginIdentifier: email, password });
+      const response = await authService.login({ loginIdentifier: data.email, password: data.password });
       const { customToken } = response;
       await signInWithCustomToken(auth, customToken);
       const idToken = await auth.currentUser.getIdToken();
@@ -113,20 +125,23 @@ const Login = () => {
           <Typography component="h1" variant="h5" sx={{ color: '#ffffff', mb: 3 }}>
             Login
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1, width: '100%' }}>
             <TextField
               margin="normal"
-              required
               fullWidth
               id="email"
               label="Email or Username"
               name="email"
               autoComplete="email"
               autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
+              }}
+              FormHelperTextProps={{
+                style: { color: '#f44336' },
               }}
               sx={{
                 '& .MuiOutlinedInput-root': {
@@ -143,36 +158,38 @@ const Login = () => {
                 input: { color: '#ffffff' },
               }}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              InputLabelProps={{
-                style: { color: '#bbbbbb' },
-              }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '& fieldset': {
-                    borderColor: '#3f51b5',
-                  },
-                  '&:hover fieldset': {
-                    borderColor: '#9c27b0',
-                  },
-                  '&.Mui-focused fieldset': {
-                    borderColor: '#9c27b0',
-                  },
-                },
-                input: { color: '#ffffff' },
-              }}
-            />
-            <AnimatedButton
+                        <TextField
+                          margin="normal"
+                          fullWidth
+                          name="password"
+                          label="Password"
+                          type="password"
+                          id="password"
+                          autoComplete="current-password"
+                          {...register('password')}
+                          error={!!errors.password}
+                          helperText={errors.password?.message}
+                          InputLabelProps={{
+                            style: { color: '#bbbbbb' },
+                          }}
+                          FormHelperTextProps={{
+                            style: { color: '#f44336' },
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                borderColor: '#3f51b5',
+                              },
+                              '&:hover fieldset': {
+                                borderColor: '#9c27b0',
+                              },
+                              '&.Mui-focused fieldset': {
+                                borderColor: '#9c27b0',
+                              },
+                            },
+                            input: { color: '#ffffff' },
+                          }}
+                        />            <AnimatedButton
               type="submit"
               fullWidth
               variant="contained"

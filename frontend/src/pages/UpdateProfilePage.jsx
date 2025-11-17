@@ -1,11 +1,14 @@
-import { useState, useContext } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  TextField, 
-  Button, 
-  Card, 
+import { useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Card,
   CardContent,
   Alert,
   Snackbar,
@@ -14,12 +17,19 @@ import {
 import { UserContext } from '../context/UserContext';
 import authService from '../services/authService';
 
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+});
+
 const UpdateProfilePage = () => {
   const { user, setUser } = useContext(UserContext);
-  const [formData, setFormData] = useState({
-    username: user?.username || '',
-    email: user?.email || '',
-    avatar: user?.avatar || '',
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      username: user?.username || '',
+      email: user?.email || '',
+    }
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -27,14 +37,9 @@ const UpdateProfilePage = () => {
     severity: 'success'
   });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
-      const updatedUser = await authService.updateProfile(formData);
+      const updatedUser = await authService.updateProfile(data);
       setUser(updatedUser);
       setSnackbar({
         open: true,
@@ -118,12 +123,12 @@ const UpdateProfilePage = () => {
                 sx={{ width: 120, height: 120, border: '3px solid #8b00ff' }}
               />
             </Box>
-            <Box component="form" onSubmit={handleSubmit}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box sx={{ mb: 3 }}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
@@ -138,9 +143,9 @@ const UpdateProfilePage = () => {
                   type="text"
                   id="username"
                   name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
+                  {...register('username')}
+                  error={!!errors.username}
+                  helperText={errors.username?.message}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       color: 'white',
@@ -166,12 +171,11 @@ const UpdateProfilePage = () => {
                 />
               </Box>
 
-
               <Box sx={{ mb: 4 }}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
@@ -186,9 +190,9 @@ const UpdateProfilePage = () => {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
+                  {...register('email')}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
                   sx={{
                     '& .MuiOutlinedInput-root': {
                       color: 'white',

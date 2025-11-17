@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import {
   Modal,
   Box,
@@ -12,7 +15,8 @@ import {
   IconButton,
   Grid,
   Fade,
-  Backdrop
+  Backdrop,
+  FormHelperText,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,24 +34,31 @@ const categories = [
   'Digital Games',
 ];
 
+const schema = yup.object().shape({
+  name: yup.string().required('Product name is required'),
+  description: yup.string().required('Description is required'),
+  price: yup.number().required('Price is required').positive('Price must be positive'),
+  category: yup.string().required('Category is required'),
+  stock: yup.number().required('Stock is required').integer('Stock must be an integer'),
+});
+
 const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
-  const [productData, setProductData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
-    images: [],
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      name: '',
+      description: '',
+      price: '',
+      category: '',
+      stock: '',
+    },
   });
   const [selectedFiles, setSelectedFiles] = useState([]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProductData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
 
   const handleFileChange = (e) => {
     setSelectedFiles([...e.target.files]);
@@ -59,8 +70,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
     setSelectedFiles(newFiles);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     try {
       let imageUrls = [];
       if (selectedFiles.length > 0) {
@@ -72,17 +82,10 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
         imageUrls = response.urls;
       }
 
-      const finalProductData = { ...productData, images: imageUrls };
+      const finalProductData = { ...data, images: imageUrls };
       await createProduct(finalProductData);
 
-      setProductData({
-        name: '',
-        description: '',
-        price: '',
-        category: '',
-        stock: '',
-        images: [],
-      });
+      reset();
       setSelectedFiles([]);
       handleClose();
       onProductCreated();
@@ -102,8 +105,8 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
         timeout: 500,
         sx: {
           backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          backdropFilter: 'blur(8px)'
-        }
+          backdropFilter: 'blur(8px)',
+        },
       }}
     >
       <Fade in={open}>
@@ -135,29 +138,33 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
           }}
         >
           {/* Header */}
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            mb: 4,
-            pb: 3,
-            borderBottom: '1px solid rgba(139, 0, 255, 0.3)'
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mb: 4,
+              pb: 3,
+              borderBottom: '1px solid rgba(139, 0, 255, 0.3)',
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box sx={{ 
-                width: '4px', 
-                height: '30px', 
-                background: 'linear-gradient(to bottom, #8b00ff, #00d4ff)',
-                mr: 2,
-                borderRadius: '2px',
-                boxShadow: '0 0 10px rgba(139, 0, 255, 0.5)'
-              }} />
-              <Typography 
-                variant="h5" 
-                sx={{ 
+              <Box
+                sx={{
+                  width: '4px',
+                  height: '30px',
+                  background: 'linear-gradient(to bottom, #8b00ff, #00d4ff)',
+                  mr: 2,
+                  borderRadius: '2px',
+                  boxShadow: '0 0 10px rgba(139, 0, 255, 0.5)',
+                }}
+              />
+              <Typography
+                variant="h5"
+                sx={{
                   color: 'white',
                   fontWeight: 700,
-                  letterSpacing: '0.5px'
+                  letterSpacing: '0.5px',
                 }}
               >
                 Create New Product
@@ -170,9 +177,9 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                 '&:hover': {
                   color: '#ef4444',
                   backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                  transform: 'rotate(90deg)'
+                  transform: 'rotate(90deg)',
                 },
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
               }}
             >
               <CloseIcon />
@@ -180,248 +187,273 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
           </Box>
 
           {/* Form */}
-          <Box component="form" onSubmit={handleSubmit}>
+          <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
               {/* Product Name */}
               <Grid item xs={12}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Product Name
                 </Typography>
-                <TextField
-                  required
-                  fullWidth
-                  id="name"
+                <Controller
                   name="name"
-                  placeholder="Enter product name"
-                  value={productData.name}
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                      '& fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#8b00ff',
-                        boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)'
-                      },
-                    },
-                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="name"
+                      placeholder="Enter product name"
+                      error={!!errors.name}
+                      helperText={errors.name?.message}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          color: 'white',
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          '& fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.3)',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.5)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#8b00ff',
+                            boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)',
+                          },
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Grid>
 
               {/* Description */}
               <Grid item xs={12}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Description
                 </Typography>
-                <TextField
-                  required
-                  fullWidth
-                  id="description"
+                <Controller
                   name="description"
-                  placeholder="Enter product description"
-                  multiline
-                  rows={3}
-                  value={productData.description}
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                      '& fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#8b00ff',
-                        boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)'
-                      },
-                    },
-                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="description"
+                      placeholder="Enter product description"
+                      multiline
+                      rows={3}
+                      error={!!errors.description}
+                      helperText={errors.description?.message}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          color: 'white',
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          '& fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.3)',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.5)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#8b00ff',
+                            boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)',
+                          },
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Grid>
 
               {/* Price and Stock */}
               <Grid item xs={12} sm={6}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Price
                 </Typography>
-                <TextField
-                  required
-                  fullWidth
-                  id="price"
+                <Controller
                   name="price"
-                  type="number"
-                  placeholder="0.00"
-                  value={productData.price}
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                      '& fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#8b00ff',
-                        boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)'
-                      },
-                    },
-                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="price"
+                      type="number"
+                      placeholder="0.00"
+                      error={!!errors.price}
+                      helperText={errors.price?.message}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          color: 'white',
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          '& fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.3)',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.5)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#8b00ff',
+                            boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)',
+                          },
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Stock
                 </Typography>
-                <TextField
-                  required
-                  fullWidth
-                  id="stock"
+                <Controller
                   name="stock"
-                  type="number"
-                  placeholder="0"
-                  value={productData.stock}
-                  onChange={handleChange}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                      '& fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(139, 0, 255, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#8b00ff',
-                        boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)'
-                      },
-                    },
-                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      id="stock"
+                      type="number"
+                      placeholder="0"
+                      error={!!errors.stock}
+                      helperText={errors.stock?.message}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          color: 'white',
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          '& fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.3)',
+                          },
+                          '&:hover fieldset': {
+                            borderColor: 'rgba(139, 0, 255, 0.5)',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#8b00ff',
+                            boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)',
+                          },
+                        },
+                      }}
+                    />
+                  )}
                 />
               </Grid>
 
               {/* Category */}
               <Grid item xs={12}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)', 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'rgba(255, 255, 255, 0.7)',
                     mb: 1,
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Category
                 </Typography>
-                <FormControl fullWidth required>
-                  <Select
-                    id="category"
+                <FormControl fullWidth error={!!errors.category}>
+                  <Controller
                     name="category"
-                    value={productData.category}
-                    onChange={handleChange}
-                    displayEmpty
-                    sx={{
-                      color: 'white',
-                      backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgba(139, 0, 255, 0.3)',
-                      },
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: 'rgba(139, 0, 255, 0.5)',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#8b00ff',
-                        boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)'
-                      },
-                      '& .MuiSvgIcon-root': {
-                        color: 'rgba(255, 255, 255, 0.7)',
-                      },
-                    }}
-                    MenuProps={{
-                      PaperProps: {
-                        sx: {
-                          background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.98) 0%, rgba(37, 42, 69, 0.98) 100%)',
-                          border: '1px solid rgba(139, 0, 255, 0.3)',
-                          '& .MuiMenuItem-root': {
-                            color: 'white',
-                            '&:hover': {
-                              backgroundColor: 'rgba(139, 0, 255, 0.2)',
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        id="category"
+                        displayEmpty
+                        sx={{
+                          color: 'white',
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'rgba(139, 0, 255, 0.3)',
+                          },
+                          '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'rgba(139, 0, 255, 0.5)',
+                          },
+                          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#8b00ff',
+                            boxShadow: '0 0 10px rgba(139, 0, 255, 0.3)',
+                          },
+                          '& .MuiSvgIcon-root': {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                          },
+                        }}
+                        MenuProps={{
+                          PaperProps: {
+                            sx: {
+                              background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.98) 0%, rgba(37, 42, 69, 0.98) 100%)',
+                              border: '1px solid rgba(139, 0, 255, 0.3)',
+                              '& .MuiMenuItem-root': {
+                                color: 'white',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(139, 0, 255, 0.2)',
+                                },
+                                '&.Mui-selected': {
+                                  backgroundColor: 'rgba(139, 0, 255, 0.3)',
+                                  '&:hover': {
+                                    backgroundColor: 'rgba(139, 0, 255, 0.4)',
+                                  },
+                                },
+                              },
                             },
-                            '&.Mui-selected': {
-                              backgroundColor: 'rgba(139, 0, 255, 0.3)',
-                              '&:hover': {
-                                backgroundColor: 'rgba(139, 0, 255, 0.4)',
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <MenuItem value="" disabled>
-                      Select a category
-                    </MenuItem>
-                    {categories.map((category) => (
-                      <MenuItem key={category} value={category}>
-                        {category}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                          },
+                        }}
+                      >
+                        <MenuItem value="" disabled>
+                          Select a category
+                        </MenuItem>
+                        {categories.map((category) => (
+                          <MenuItem key={category} value={category}>
+                            {category}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.category && <FormHelperText>{errors.category.message}</FormHelperText>}
                 </FormControl>
               </Grid>
 
@@ -435,7 +467,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                     fontWeight: 600,
                     textTransform: 'uppercase',
                     letterSpacing: '1px',
-                    fontSize: '0.75rem'
+                    fontSize: '0.75rem',
                   }}
                 >
                   Product Images
@@ -450,7 +482,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                     border: '1px solid rgba(139, 0, 255, 0.3)',
                     borderRadius: '4px',
                     padding: '10px',
-                    width: '100%'
+                    width: '100%',
                   }}
                 />
                 {selectedFiles.length > 0 && (
@@ -503,9 +535,9 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                       letterSpacing: '1px',
                       '&:hover': {
                         boxShadow: '0 0 30px rgba(139, 0, 255, 0.6)',
-                        transform: 'translateY(-2px)'
+                        transform: 'translateY(-2px)',
                       },
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     Create Product
@@ -522,7 +554,7 @@ const CreateProductModal = ({ open, handleClose, onProductCreated }) => {
                       '&:hover': {
                         borderColor: 'rgba(255, 255, 255, 0.5)',
                         backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                      }
+                      },
                     }}
                   >
                     Cancel

@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import {
   Container,
   Box,
@@ -9,6 +12,12 @@ import {
 } from '@mui/material';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
+
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  email: yup.string().email('Invalid email').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+});
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
   position: 'relative',
@@ -37,16 +46,16 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const onSubmit = async (data) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
-        password
+        data.email,
+        data.password
       );
       console.log(userCredential);
       // TODO: Redirect user or show success message
@@ -83,7 +92,7 @@ const Register = () => {
           <Typography component="h1" variant="h5" sx={{ color: '#ffffff', mb: 3 }}>
             Register
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, width: '100%' }}>
+          <Box component="form" noValidate onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3, width: '100%' }}>
             <TextField
               margin="normal"
               required
@@ -93,6 +102,9 @@ const Register = () => {
               name="username"
               autoComplete="username"
               autoFocus
+              {...register('username')}
+              error={!!errors.username}
+              helperText={errors.username?.message}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
               }}
@@ -119,8 +131,9 @@ const Register = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
               }}
@@ -148,8 +161,9 @@ const Register = () => {
               type="password"
               id="password"
               autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               InputLabelProps={{
                 style: { color: '#bbbbbb' },
               }}
