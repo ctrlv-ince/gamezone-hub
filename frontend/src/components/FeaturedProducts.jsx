@@ -9,7 +9,7 @@ const FeaturedProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const data = await getAllProducts();
-      setFeaturedProducts(data.slice(0, 4));
+      setFeaturedProducts(data.products.slice(0, 4));
     };
 
     fetchProducts();

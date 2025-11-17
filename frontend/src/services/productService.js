@@ -2,7 +2,7 @@ import api from './api';
 
 const API_URL = '/products';
 
-export const getAllProducts = async (filters) => {
+export const getAllProducts = async (filters, page = 1, limit = 10) => {
   const params = new URLSearchParams();
   if (filters) {
     Object.keys(filters).forEach(key => {
@@ -11,6 +11,8 @@ export const getAllProducts = async (filters) => {
       }
     });
   }
+  params.append('page', page);
+  params.append('limit', limit);
   const response = await api.get(`${API_URL}?${params.toString()}`);
   return response.data;
 };

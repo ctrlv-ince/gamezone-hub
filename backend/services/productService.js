@@ -3,6 +3,8 @@ const Order = require('../models/Order');
 
 const getProducts = async (filters) => {
   let query = {};
+  const pageSize = Number(filters.limit) || 10;
+  const page = Number(filters.page) || 1;
 
   if (filters) {
     if (filters.priceRange) {
@@ -23,14 +25,18 @@ const getProducts = async (filters) => {
       }
     }
   }
-  const products = await Product.find(query).populate({
-    path: 'reviews',
-    populate: {
-      path: 'user',
-      select: 'username',
-    },
-  });
-  return products;
+  const count = await Product.countDocuments(query);
+  const products = await Product.find(query)
+    .limit(pageSize)
+    .skip(pageSize * (page - 1))
+    .populate({
+      path: 'reviews',
+      populate: {
+        path: 'user',
+        select: 'username',
+      },
+    });
+  return { products, page, pages: Math.ceil(count / pageSize), count };
 };
 
 const getProduct = async (productId) => {
