@@ -331,7 +331,7 @@ const OrderHistoryPage = () => {
                                textAlign: 'right',
                              }}
                            >
-                             {$(item.product.price * item.quantity).toFixed(2)}
+                             ₱{(item.product.price * item.quantity).toFixed(2)}
                            </Typography>
                            {order.status === 'Completed' && (() => {
                               const userReview = user && item.product.reviews

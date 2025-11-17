@@ -2,12 +2,24 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 
 const getProducts = async () => {
-  const products = await Product.find().populate('reviews.user', 'name email');
+  const products = await Product.find({}).populate({
+    path: 'reviews',
+    populate: {
+      path: 'user',
+      select: 'username',
+    },
+  });
   return products;
 };
 
 const getProduct = async (productId) => {
-  const product = await Product.findById(productId);
+  const product = await Product.findById(productId).populate({
+    path: 'reviews',
+    populate: {
+      path: 'user',
+      select: 'username',
+    },
+  });
   if (!product) {
     throw new Error('Product not found');
   }

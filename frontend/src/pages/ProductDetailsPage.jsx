@@ -258,7 +258,7 @@ const ProductDetailsPage = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Rating 
-                    value={product.ratings || 0} 
+                    value={product.rating || 0} 
                     readOnly 
                     precision={0.1}
                     sx={{
@@ -271,11 +271,11 @@ const ProductDetailsPage = () => {
                     }}
                   />
                   <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.95rem' }}>
-                    {product.ratings?.toFixed(1) || '0.0'}
+                    {product.rating?.toFixed(1) || '0.0'}
                   </Typography>
                 </Box>
                 <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.9rem' }}>
-                  ({product.numOfReviews || 0} reviews)
+                  ({product.numReviews || 0} reviews)
                 </Typography>
               </Box>
 
@@ -502,6 +502,33 @@ const ProductDetailsPage = () => {
             </Box>
           </Grid>
         </Grid>
+        </Box>
+        <Box sx={{ maxWidth: '1600px', mx: 'auto', mt: 6 }}>
+          <Typography variant="h4" sx={{ color: 'white', fontWeight: 700, mb: 3 }}>
+            Reviews
+          </Typography>
+          {product.reviews && product.reviews.length > 0 ? (
+            <Box>
+              {product.reviews.map((review) => (
+                <Box key={review._id} sx={{ mb: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Typography sx={{ color: 'white', fontWeight: 600, mr: 1 }}>
+                      {review.name || (review.user && review.user.username) || 'Anonymous'}
+                    </Typography>
+                    <Rating value={review.rating} readOnly size="small" />
+                  </Box>
+                  <Typography sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+                    {review.comment}
+                  </Typography>
+                  <Divider sx={{ borderColor: 'rgba(139, 0, 255, 0.2)', mt: 3 }} />
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              No reviews yet.
+            </Typography>
+          )}
         </Box>
       </Container>
     </Box>

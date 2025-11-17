@@ -9,6 +9,7 @@ import {
   Button,
   Box,
   IconButton,
+  Rating,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -202,6 +203,26 @@ const ProductCard = ({ product }) => {
         >
           ₱{Number(product.price).toFixed(2)}
         </Typography>
+
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+          <Rating
+            value={product.rating || 0}
+            readOnly
+            precision={0.1}
+            size="small"
+            sx={{
+              '& .MuiRating-iconFilled': {
+                color: '#fbbf24',
+              },
+              '& .MuiRating-iconEmpty': {
+                color: 'rgba(251, 191, 36, 0.3)',
+              },
+            }}
+          />
+          <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.8rem' }}>
+            ({product.numReviews || 0})
+          </Typography>
+        </Box>
       </CardContent>
 
       {/* Actions Section */}

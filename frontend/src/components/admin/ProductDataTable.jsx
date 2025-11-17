@@ -217,6 +217,32 @@ const ProductDataTable = ({
       }
     },
     {
+      field: 'rating',
+      headerName: 'Ratings',
+      width: 180,
+      renderCell: (params) => (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Rating
+            value={params.value || 0}
+            readOnly
+            precision={0.1}
+            size="small"
+            sx={{
+              '& .MuiRating-iconFilled': {
+                color: '#fbbf24',
+              },
+              '& .MuiRating-iconEmpty': {
+                color: 'rgba(251, 191, 36, 0.3)',
+              },
+            }}
+          />
+          <Box sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.8rem' }}>
+            ({params.row.numOfReviews || 0})
+          </Box>
+        </Box>
+      )
+    },
+    {
       field: 'actions',
       headerName: 'Actions',
       width: 100,
