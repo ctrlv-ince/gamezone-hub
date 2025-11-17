@@ -48,9 +48,11 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ msg: 'Product not found' });
     }
 
+    const { images, ...productData } = req.body;
     const updatedProduct = await productService.updateProduct(
       req.params.id,
-      req.body
+      productData,
+      images || []
     );
     res.json(updatedProduct);
   } catch (err) {

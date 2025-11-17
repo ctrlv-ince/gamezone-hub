@@ -7,8 +7,8 @@
     "dev": "nodemon server.js",
     "frontend": "npm run dev --prefix ../frontend",
     "start": "concurrently \"npm run dev\" \"npm run frontend\"",
-    "seeder": "node backend/utils/seeder.js",
-    "seeder:delete": "node backend/utils/seeder.js -d"
+    "seeder": "node utils/seeder.js",
+    "seeder:delete": "node utils/seeder.js -d"
   },
   "author": "borja",
   "license": "ISC",

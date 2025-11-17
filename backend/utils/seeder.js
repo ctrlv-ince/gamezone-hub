@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import Product from '../models/Product.js';
 
-dotenv.config({ path: path.resolve(process.cwd(), 'backend', '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const connectDB = async () => {
   try {
@@ -21,7 +21,7 @@ const importData = async () => {
     await Product.deleteMany();
 
     const products = JSON.parse(
-      fs.readFileSync(path.resolve(process.cwd(), 'backend', 'data', 'products.json'), 'utf-8')
+      fs.readFileSync(path.resolve(process.cwd(), 'data', 'products.json'), 'utf-8')
     );
 
     await Product.insertMany(products);

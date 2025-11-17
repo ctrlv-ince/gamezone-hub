@@ -67,7 +67,16 @@ const createProduct = async (productData, imageUrls) => {
   return product;
 };
 
-const updateProduct = async (productId, productData) => {
+const updateProduct = async (productId, productData, imageUrls) => {
+  // Process images if provided
+  if (imageUrls && imageUrls.length > 0) {
+    const images = imageUrls.map((url) => {
+      const public_id = url.split('/').pop().split('.')[0];
+      return { public_id, url };
+    });
+    productData.images = images;
+  }
+
   const updatedProduct = await Product.findByIdAndUpdate(
     productId,
     productData,
