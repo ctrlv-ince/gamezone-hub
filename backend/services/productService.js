@@ -2,7 +2,7 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 
 const getProducts = async () => {
-  const products = await Product.find();
+  const products = await Product.find().populate('reviews.user', 'name email');
   return products;
 };
 
