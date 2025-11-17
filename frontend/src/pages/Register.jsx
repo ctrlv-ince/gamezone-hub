@@ -57,7 +57,6 @@ const Register = () => {
         data.email,
         data.password
       );
-      console.log(userCredential);
       // TODO: Redirect user or show success message
     } catch (error) {
       console.error('Error registering:', error);

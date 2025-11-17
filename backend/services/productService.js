@@ -1,8 +1,29 @@
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
-const getProducts = async () => {
-  const products = await Product.find({}).populate({
+const getProducts = async (filters) => {
+  let query = {};
+
+  if (filters) {
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number);
+      if (!isNaN(min) && !isNaN(max)) {
+        query.price = { $gte: min, $lte: max };
+      }
+    }
+
+    if (filters.category) {
+      query.category = filters.category;
+    }
+
+    if (filters.rating) {
+      const rating = Number(filters.rating);
+      if (!isNaN(rating)) {
+        query.rating = { $eq: rating };
+      }
+    }
+  }
+  const products = await Product.find(query).populate({
     path: 'reviews',
     populate: {
       path: 'user',

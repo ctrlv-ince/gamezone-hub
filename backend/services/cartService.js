@@ -31,7 +31,6 @@ const getCart = async (userId) => {
 };
 
 const addItemToCart = async (userId, item) => {
-  console.log('addItemToCart called with userId:', userId, 'and item:', item);
   const { productId, quantity } = item;
   const product = await Product.findById(productId);
   if (!product) {
@@ -39,25 +38,20 @@ const addItemToCart = async (userId, item) => {
   }
 
   let cart = await Cart.findOne({ user: userId });
-  console.log('Initial cart:', cart);
 
   if (!cart) {
     cart = new Cart({ user: userId, cartItems: [] });
-    console.log('New cart created:', cart);
   }
 
   // Populate cart to handle cleanup and updates consistently
   await populateCart(cart);
-  console.log('Cart after population:', cart);
 
   // Clean up cart from deleted products
   cart.cartItems = cart.cartItems.filter(item => item.product);
-  console.log('Cart after cleaning:', cart);
 
   const itemIndex = cart.cartItems.findIndex(
     (i) => i.product && i.product._id.toString() === productId
   );
-  console.log('Found itemIndex:', itemIndex);
 
   const itemQuantity = quantity ? Number(quantity) : 1;
 
@@ -71,11 +65,9 @@ const addItemToCart = async (userId, item) => {
       price: product.price,
     });
   }
-  console.log('Cart before save:', cart);
 
   await cart.save();
   await populateCart(cart); // Re-populate to ensure consistency
-  console.log('Final cart returned:', cart);
   return cart;
 };
 

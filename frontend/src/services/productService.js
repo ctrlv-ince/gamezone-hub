@@ -2,8 +2,16 @@ import api from './api';
 
 const API_URL = '/products';
 
-export const getAllProducts = async () => {
-  const response = await api.get(API_URL);
+export const getAllProducts = async (filters) => {
+  const params = new URLSearchParams();
+  if (filters) {
+    Object.keys(filters).forEach(key => {
+      if (filters[key]) {
+        params.append(key, filters[key]);
+      }
+    });
+  }
+  const response = await api.get(`${API_URL}?${params.toString()}`);
   return response.data;
 };
 export const getProductById = async (id) => {

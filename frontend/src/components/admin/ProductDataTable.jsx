@@ -222,7 +222,7 @@ const ProductDataTable = ({
       width: 180,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {/* <Rating
+          <Rating
             value={params.value || 0}
             readOnly
             precision={0.1}
@@ -235,9 +235,9 @@ const ProductDataTable = ({
                 color: 'rgba(251, 191, 36, 0.3)',
               },
             }}
-          /> */}
+          />
           <Box sx={{ color: 'rgba(255, 255, 255, 0.5)', fontSize: '0.8rem' }}>
-            ({params.row.numOfReviews || 0})
+            ({params.row.numReviews || 0})
           </Box>
         </Box>
       )

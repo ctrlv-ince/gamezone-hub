@@ -5,7 +5,7 @@ const productService = require('../services/productService');
 // @access  Public
 const getAllProducts = async (req, res) => {
   try {
-    const products = await productService.getProducts();
+    const products = await productService.getProducts(req.query);
     res.json(products);
   } catch (err) {
     console.error(err.message);
