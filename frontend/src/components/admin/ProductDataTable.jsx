@@ -240,7 +240,7 @@ const ProductDataTable = ({
 
                     <TableCell sx={{ borderBottom: '1px solid rgba(139, 0, 255, 0.15)' }}>
                       <Box sx={{ color: '#00d4ff', fontWeight: 700, fontSize: '1rem' }}>
-                        ${Number(product.price).toFixed(2)}
+                        ₱{Number(product.price).toFixed(2)}
                       </Box>
                     </TableCell>
 

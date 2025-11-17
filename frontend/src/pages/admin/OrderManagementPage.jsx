@@ -325,7 +325,7 @@ const OrderManagementPage = () => {
                             fontWeight: 700, 
                             fontSize: '1rem' 
                           }}>
-                            ${orderItem.totalPrice ? orderItem.totalPrice.toFixed(2) : '0.00'}
+                            ₱{orderItem.totalPrice ? orderItem.totalPrice.toFixed(2) : '0.00'}
                           </Typography>
                         </TableCell>
 

@@ -99,11 +99,11 @@ const sendOrderStatusUpdate = async (to, order, pdfBuffer) => {
                               ${item.product?.name || 'Product'}
                             </div>
                             <div style="font-size: 14px; color: #6b7280;">
-                              Quantity: ${item.quantity || 0} × $${item.price ? item.price.toFixed(2) : '0.00'}
+                              Quantity: ${item.quantity || 0} × ₱${item.price ? item.price.toFixed(2) : '0.00'}
                             </div>
                           </td>
                           <td style="width: 30%; text-align: right; font-size: 16px; color: #00d4ff; font-weight: 700;">
-                            $${item.quantity && item.price ? (item.quantity * item.price).toFixed(2) : '0.00'}
+                            ₱${item.quantity && item.price ? (item.quantity * item.price).toFixed(2) : '0.00'}
                           </td>
                         </tr>
                       </table>
@@ -115,7 +115,7 @@ const sendOrderStatusUpdate = async (to, order, pdfBuffer) => {
 
               <div style="background: linear-gradient(135deg, #8b00ff 0%, #00d4ff 100%); border-radius: 12px; padding: 20px; margin: 30px 0; text-align: right;">
                 <div style="font-size: 18px; color: #ffffff; font-weight: 600; margin-bottom: 5px;">Total Amount</div>
-                <div style="font-size: 32px; color: #ffffff; font-weight: 800;">$${order.totalPrice ? order.totalPrice.toFixed(2) : '0.00'}</div>
+                <div style="font-size: 32px; color: #ffffff; font-weight: 800;">₱${order.totalPrice ? order.totalPrice.toFixed(2) : '0.00'}</div>
               </div>
 
               <div style="height: 2px; background: linear-gradient(to right, transparent, #8b00ff, #00d4ff, transparent); margin: 30px 0;"></div>

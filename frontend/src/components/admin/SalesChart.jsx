@@ -240,7 +240,7 @@ const SalesChart = () => {
                 strokeWidth={3}
                 dot={{ fill: '#00d4ff', r: 5 }}
                 activeDot={{ r: 7, fill: '#00d4ff' }}
-                name="Total Sales ($)"
+                name="Total Sales (₱)"
               />
             </LineChart>
           </ResponsiveContainer>

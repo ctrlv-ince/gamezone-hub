@@ -250,7 +250,7 @@ const OrderHistoryPage = () => {
                         }}
                       />
                       <Chip
-                        label={`$${order.totalPrice.toFixed(2)}`}
+                        label={`₱${order.totalPrice.toFixed(2)}`}
                         sx={{
                           background: 'rgba(0, 212, 255, 0.1)',
                           color: '#00d4ff',
@@ -318,7 +318,7 @@ const OrderHistoryPage = () => {
                                   fontSize: '0.85rem'
                                 }}
                               >
-                                ${item.product.price.toFixed(2)} × {item.quantity}
+                                ₱{item.product.price.toFixed(2)} × {item.quantity}
                               </Typography>
                             </Box>
                           </Box>
@@ -331,7 +331,7 @@ const OrderHistoryPage = () => {
                                textAlign: 'right',
                              }}
                            >
-                             ${(item.product.price * item.quantity).toFixed(2)}
+                             {$(item.product.price * item.quantity).toFixed(2)}
                            </Typography>
                            {order.status === 'Completed' && (() => {
                               const userReview = user && item.product.reviews

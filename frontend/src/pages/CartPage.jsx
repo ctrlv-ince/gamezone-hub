@@ -231,7 +231,7 @@ const CartPage = () => {
                                 mb: 0.5
                               }}
                             >
-                              ${item.product.price.toFixed(2)}
+                              ₱{item.product.price.toFixed(2)}
                             </Typography>
                             <Typography 
                               variant="body2" 
@@ -297,7 +297,7 @@ const CartPage = () => {
                               fontWeight: 700 
                             }}
                           >
-                            ${(item.product.price * item.quantity).toFixed(2)}
+                            ₱{(item.product.price * item.quantity).toFixed(2)}
                           </Typography>
                           <Button
                             onClick={async () => {
@@ -363,7 +363,7 @@ const CartPage = () => {
                         Subtotal
                       </Typography>
                       <Typography sx={{ color: 'white', fontWeight: 600 }}>
-                        ${cartTotal.toFixed(2)}
+                        ₱{cartTotal.toFixed(2)}
                       </Typography>
                     </Box>
                     <Divider
@@ -383,7 +383,7 @@ const CartPage = () => {
                           fontWeight: 700 
                         }}
                       >
-                        ${cartTotal.toFixed(2)}
+                        ₱{cartTotal.toFixed(2)}
                       </Typography>
                     </Box>
                   </Box>

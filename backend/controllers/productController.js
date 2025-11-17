@@ -129,6 +129,18 @@ const deleteReview = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+const adminDeleteReview = async (req, res) => {
+  try {
+    const { id: productId, reviewId } = req.params;
+    await productService.adminDeleteReview(productId, reviewId);
+    res.json({ message: 'Review deleted successfully by admin' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
@@ -138,4 +150,5 @@ module.exports = {
   createProductReview,
   updateReview,
   deleteReview,
+  adminDeleteReview,
 };

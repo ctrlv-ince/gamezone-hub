@@ -174,9 +174,9 @@ function generateReceiptPdf(order) {
         .font('Helvetica')
         .text(item.product.name, itemX + 5, currentRowY, { width: 280, ellipsis: true })
         .text(item.quantity.toString(), quantityX + 5, currentRowY)
-        .text(`$${item.price.toFixed(2)}`, priceX + 5, currentRowY)
+        .text(`₱${item.price.toFixed(2)}`, priceX + 5, currentRowY)
         .font('Helvetica-Bold')
-        .text(`$${(item.quantity * item.price).toFixed(2)}`, totalX + 5, currentRowY);
+        .text(`₱${(item.quantity * item.price).toFixed(2)}`, totalX + 5, currentRowY);
 
       currentRowY += 25;
     });
@@ -201,7 +201,7 @@ function generateReceiptPdf(order) {
       .font('Helvetica')
       .text('Subtotal:', summaryLabelX, summaryY)
       .fillColor(colors.dark)
-      .text(`$${order.totalPrice.toFixed(2)}`, summaryValueX, summaryY);
+      .text(`₱${order.totalPrice.toFixed(2)}`, summaryValueX, summaryY);
 
     // Total box
     const totalBoxY = summaryY + 30;
@@ -219,7 +219,7 @@ function generateReceiptPdf(order) {
       .text('TOTAL:', summaryLabelX, totalBoxY + 5)
       .fontSize(16)
       .fillColor(colors.secondary)
-      .text(`$${order.totalPrice.toFixed(2)}`, summaryValueX, totalBoxY + 5);
+      .text(`₱${order.totalPrice.toFixed(2)}`, summaryValueX, totalBoxY + 5);
 
     // Footer section
     const footerY = doc.page.height - 100;

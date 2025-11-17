@@ -211,7 +211,7 @@ const OrderSuccessPage = () => {
                           {item.product?.name || 'Product not found'}
                         </Typography>
                         <Typography sx={{ color: '#00d4ff', fontWeight: 700, fontSize: '1.1rem' }}>
-                          ${((item.product?.price || 0) * item.quantity).toFixed(2)}
+                          ₱{((item.product?.price || 0) * item.quantity).toFixed(2)}
                         </Typography>
                       </Box>
                     }
@@ -219,7 +219,7 @@ const OrderSuccessPage = () => {
                     secondary={
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}>
                         <Typography sx={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.9rem' }}>
-                          ${(item.product?.price || 0).toFixed(2)} × {item.quantity}
+                          ₱{(item.product?.price || 0).toFixed(2)} × {item.quantity}
                         </Typography>
                       </Box>
                     }
@@ -258,7 +258,7 @@ const OrderSuccessPage = () => {
                   fontWeight: 800,
                 }}
               >
-                ${order.totalPrice.toFixed(2)}
+                ₱{order.totalPrice.toFixed(2)}
               </Typography>
             </Box>
           </CardContent>

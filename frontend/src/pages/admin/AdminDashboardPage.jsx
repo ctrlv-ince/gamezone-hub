@@ -96,6 +96,24 @@ const AdminDashboardPage = () => {
           >
             Manage Orders
           </Button>
+          <Button
+            component={Link}
+            to="/admin/reviews"
+            variant="contained"
+            sx={{
+              ml: 2,
+              background: 'linear-gradient(to right, #8b00ff, #00d4ff)',
+              color: 'white',
+              fontWeight: 600,
+              boxShadow: '0 0 20px rgba(139, 0, 255, 0.5)',
+              '&:hover': {
+                background: 'linear-gradient(to right, #a133ff, #33e0ff)',
+                boxShadow: '0 0 30px rgba(139, 0, 255, 0.8)'
+              }
+            }}
+          >
+            Manage Reviews
+          </Button>
         </Box>
 
         {/* Sales Chart Section */}

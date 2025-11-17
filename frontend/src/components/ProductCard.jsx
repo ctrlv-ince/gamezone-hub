@@ -200,7 +200,7 @@ const ProductCard = ({ product }) => {
             mt: 1,
           }}
         >
-          ${Number(product.price).toFixed(2)}
+          ₱{Number(product.price).toFixed(2)}
         </Typography>
       </CardContent>
 

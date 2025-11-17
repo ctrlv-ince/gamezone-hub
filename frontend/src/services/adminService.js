@@ -31,3 +31,14 @@ export const updateOrderStatus = async (orderId, status) => {
     throw error.response.data;
   }
 };
+
+export const adminDeleteReview = async (productId, reviewId) => {
+  try {
+    const response = await api.delete(
+      `/products/${productId}/reviews/${reviewId}/admin`
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

@@ -18,7 +18,6 @@ const FeaturedProducts = () => {
   return (
     <Box sx={{ my: 4 }}>
       <Typography variant="h4" component="h2" gutterBottom align="center">
-        Featured Products
       </Typography>
       <Grid container spacing={4}>
         {Array.isArray(featuredProducts) && featuredProducts.map((product) => (

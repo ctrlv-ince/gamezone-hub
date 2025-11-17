@@ -291,7 +291,7 @@ const ProductDetailsPage = () => {
                   fontSize: { xs: '2rem', md: '2.5rem' },
                 }}
               >
-                ${Number(product.price).toFixed(2)}
+                ₱{Number(product.price).toFixed(2)}
               </Typography>
               <Box sx={{ mb: 3 }}>
                 {product.stock > 10 ? (

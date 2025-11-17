@@ -176,6 +176,45 @@ const deleteReview = async (productId, reviewId, userId) => {
   await product.save();
   return product;
 };
+
+const adminDeleteReview = async (productId, reviewId) => {
+  const product = await Product.findById(productId);
+
+  if (!product) {
+    throw new Error('Product not found');
+  }
+
+  const review = product.reviews.id(reviewId);
+
+  if (!review) {
+    throw new Error('Review not found');
+  }
+
+  const order = await Order.findById(review.order);
+
+  if (order) {
+    const orderItem = order.orderItems.find(
+      (item) => item.product.toString() === productId
+    );
+
+    if (orderItem) {
+      orderItem.isReviewed = false;
+      await order.save();
+    }
+  }
+
+  product.reviews.pull(reviewId);
+  product.numReviews = product.reviews.length;
+  product.rating =
+    product.reviews.length > 0
+      ? product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+        product.reviews.length
+      : 0;
+
+  await product.save();
+  return product;
+};
+
 module.exports = {
   getProducts,
   getProduct,
@@ -185,4 +224,5 @@ module.exports = {
   createProductReview,
   updateReview,
   deleteReview,
+  adminDeleteReview,
 };

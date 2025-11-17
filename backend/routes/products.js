@@ -9,6 +9,7 @@ const {
   createProductReview,
   updateReview,
   deleteReview,
+  adminDeleteReview,
 } = require('../controllers/productController');
 const { auth, isAdmin } = require('../middleware/auth');
 
@@ -20,5 +21,11 @@ router.delete('/', auth, isAdmin, deleteProducts);
 router.post('/:id/reviews', auth, createProductReview);
 router.put('/:id/reviews/:reviewId', auth, updateReview);
 router.delete('/:id/reviews/:reviewId', auth, deleteReview);
+router.delete(
+  '/:id/reviews/:reviewId/admin',
+  auth,
+  isAdmin,
+  adminDeleteReview
+);
 
 module.exports = router;
