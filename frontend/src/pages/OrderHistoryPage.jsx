@@ -66,10 +66,13 @@ const OrderHistoryPage = () => {
   };
 
   const handleReviewSubmit = async (reviewData) => {
-    if (!selectedProduct) return;
+    if (!selectedProduct || !user) return;
 
     try {
-      await createReview(selectedProduct._id, { ...reviewData, orderId: selectedOrderId });
+      await createReview(selectedProduct._id, {
+        ...reviewData,
+        orderId: selectedOrderId
+      });
       handleCloseReviewModal();
       fetchOrders(); // Refresh orders to update review status
     } catch (error) {
@@ -90,10 +93,12 @@ const OrderHistoryPage = () => {
   };
 
   const handleEditSubmit = async (reviewData) => {
-    if (!selectedProduct || !editingReview) return;
+    if (!selectedProduct || !editingReview || !user) return;
 
     try {
-      await updateReview(selectedProduct._id, editingReview._id, reviewData);
+      await updateReview(selectedProduct._id, editingReview._id, {
+        ...reviewData,
+      });
       handleCloseEditModal();
       fetchOrders();
     } catch (error) {
@@ -112,26 +117,7 @@ const OrderHistoryPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (userLoading) return;
 
-    const fetchOrders = async () => {
-      try {
-        const response = await getMyOrders();
-        if (response) {
-          setOrders(response);
-        }
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-        if (error.response?.status === 401) {
-          navigate('/login');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, [userLoading]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {

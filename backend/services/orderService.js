@@ -54,7 +54,7 @@ const createOrderFromCart = async (userId) => {
 const getOrders = async (userId) => {
   return await Order.find({ user: userId }).populate({
     path: 'orderItems.product',
-    select: 'name price images'
+    select: 'name price images reviews'
   }).sort({ createdAt: -1 });
 };
 
@@ -63,7 +63,7 @@ const getOrderById = async (id) => {
     .populate('user', 'username')
     .populate({
       path: 'orderItems.product',
-      select: 'name price images'
+      select: 'name price images reviews'
     });
   if (!order) {
     throw new Error('Order not found');
@@ -112,7 +112,7 @@ const updateOrderStatus = async (orderId, status) => {
 const getAllOrders = async () => {
   return await Order.find({}).select('status createdAt totalPrice').populate('user', 'username email').populate({
     path: 'orderItems.product',
-    select: 'name price images'
+    select: 'name price images reviews'
   }).sort({ createdAt: -1 });
 };
 

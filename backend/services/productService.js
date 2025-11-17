@@ -47,7 +47,8 @@ const createProductReview = async (
   user,
   rating,
   comment,
-  orderId
+  orderId,
+  name
 ) => {
   const product = await Product.findById(productId);
 
@@ -67,7 +68,7 @@ const createProductReview = async (
     }
 
     const review = {
-      name: user.name,
+      name,
       rating: Number(rating),
       comment,
       user: user._id,
@@ -98,7 +99,14 @@ const createProductReview = async (
     throw new Error('Product not found');
   }
 };
-const updateReview = async (productId, reviewId, userId, rating, comment) => {
+const updateReview = async (
+  productId,
+  reviewId,
+  userId,
+  rating,
+  comment,
+  username
+) => {
   const product = await Product.findById(productId);
 
   if (!product) {
@@ -117,6 +125,7 @@ const updateReview = async (productId, reviewId, userId, rating, comment) => {
 
   review.rating = rating;
   review.comment = comment;
+  review.name = username;
 
   product.rating =
     product.reviews.reduce((acc, item) => item.rating + acc, 0) /

@@ -84,7 +84,8 @@ const createProductReview = async (req, res) => {
       user,
       rating,
       comment,
-      orderId
+      orderId,
+      user.username
     );
 
     res.status(201).json({ message: 'Review added successfully' });
@@ -104,7 +105,8 @@ const updateReview = async (req, res) => {
       reviewId,
       userId,
       rating,
-      comment
+      comment,
+      req.user.username
     );
 
     res.json({ message: 'Review updated successfully' });
