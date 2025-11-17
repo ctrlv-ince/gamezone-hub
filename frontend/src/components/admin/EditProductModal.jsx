@@ -76,17 +76,38 @@ const EditProductModal = ({ open, handleClose, product, onProductUpdated }) => {
   };
 
   const handleRemoveImage = (index) => {
-    const newImages = [...productData.images];
-    newImages.splice(index, 1);
-    setProductData((prevData) => ({
-      ...prevData,
-      images: newImages,
-    }));
+    // If index is within existing images length, remove from existing images
+    if (index < productData.images.length) {
+      const newImages = [...productData.images];
+      newImages.splice(index, 1);
+      setProductData((prevData) => ({
+        ...prevData,
+        images: newImages,
+      }));
+    } else {
+      // Otherwise, remove from selected files
+      const fileIndex = index - productData.images.length;
+      const newFiles = [...selectedFiles];
+      newFiles.splice(fileIndex, 1);
+      setSelectedFiles(newFiles);
+    }
   };
 
   const onSubmit = async (data) => {
     try {
-      const updatedProduct = await updateProduct(product._id, { ...data, images: productData.images });
+      let imageUrls = [...productData.images]; // Start with existing images
+
+      // Upload new images if any are selected
+      if (selectedFiles.length > 0) {
+        const formData = new FormData();
+        for (let i = 0; i < selectedFiles.length; i++) {
+          formData.append('images', selectedFiles[i]);
+        }
+        const response = await uploadImage(formData);
+        imageUrls = [...imageUrls, ...response.urls]; // Combine existing and new images
+      }
+
+      const updatedProduct = await updateProduct(product._id, { ...data, images: imageUrls });
       onProductUpdated(updatedProduct);
       handleClose();
     } catch (error) {
@@ -476,14 +497,43 @@ const EditProductModal = ({ open, handleClose, product, onProductUpdated }) => {
                     width: '100%'
                   }}
                 />
-                {productData.images.length > 0 && (
+                {(productData.images.length > 0 || selectedFiles.length > 0) && (
                   <Box sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                    {/* Existing images */}
                     {productData.images.map((image, index) => (
-                      <Box key={index} sx={{ position: 'relative' }}>
-                        <img src={image.url} alt={`Product image ${index + 1}`} width="100" height="100" style={{ objectFit: 'cover', borderRadius: '8px' }} />
+                      <Box key={`existing-${index}`} sx={{ position: 'relative' }}>
+                        <img src={image.url} alt={`Existing image ${index + 1}`} width="100" height="100" style={{ objectFit: 'cover', borderRadius: '8px' }} />
                         <IconButton
                           size="small"
                           onClick={() => handleRemoveImage(index)}
+                          sx={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            color: 'white',
+                            '&:hover': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    ))}
+                    {/* Newly selected files */}
+                    {selectedFiles.map((file, index) => (
+                      <Box key={`new-${index}`} sx={{ position: 'relative' }}>
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`New image ${index + 1}`}
+                          width="100"
+                          height="100"
+                          style={{ objectFit: 'cover', borderRadius: '8px' }}
+                        />
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRemoveImage(productData.images.length + index)}
                           sx={{
                             position: 'absolute',
                             top: 0,

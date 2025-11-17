@@ -24,8 +24,8 @@ const ProductManagementPage = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const response = await getAllProducts();
-        setProducts(response);
+        const response = await getAllProducts({}, 1, 1000); // Get all products with high limit
+        setProducts(response.products || []);
       } catch (error) {
         console.error('Error fetching products:', error);
       } finally {
@@ -97,8 +97,8 @@ const ProductManagementPage = () => {
   const triggerRefresh = async () => {
     setLoading(true);
     try {
-      const response = await getAllProducts();
-      setProducts(response);
+      const response = await getAllProducts({}, 1, 1000); // Get all products with high limit
+      setProducts(response.products || []);
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {

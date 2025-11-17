@@ -24,13 +24,19 @@ const ProductList = () => {
       if (pageNum === 1) {
         setProducts(newProducts);
       } else {
-        setProducts((prevProducts) => [...prevProducts, ...newProducts]);
+        setProducts((prevProducts) => {
+          // Filter out duplicates based on _id
+          const existingIds = new Set(prevProducts.map(p => p._id));
+          const uniqueNewProducts = newProducts.filter(p => !existingIds.has(p._id));
+          return [...prevProducts, ...uniqueNewProducts];
+        });
       }
       setPages(totalPages);
-      setHasMore(pageNum < totalPages);
+      setHasMore(pageNum < totalPages && newProducts.length > 0);
       setPage(pageNum);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setHasMore(false); // Stop infinite scroll on error
     } finally {
       setLoading(false);
     }
@@ -48,8 +54,7 @@ const ProductList = () => {
   };
 
   const fetchMoreData = () => {
-    if (page >= pages) {
-      setHasMore(false);
+    if (!hasMore || loading) {
       return;
     }
     fetchProducts(page + 1);

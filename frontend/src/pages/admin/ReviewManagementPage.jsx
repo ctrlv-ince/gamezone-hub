@@ -24,11 +24,12 @@ const ReviewManagementPage = () => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const products = await getAllProducts();
+      const response = await getAllProducts();
+      const products = response.products || [];
       const allReviews = products.flatMap((product) =>
         product.reviews.map((review) => ({
           ...review,
-          name: review.user.username || review.name,
+          name: review.user?.username || review.name,
           productName: product.name,
           productId: product._id,
         }))
