@@ -70,10 +70,21 @@ const login = async (req, res) => {
   }
 };
 
+const register = async (req, res) => {
+  try {
+    const { user, token } = await authService.createUser(req.body);
+    res.status(201).json({ user, token });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   getMe,
   updateProfile,
   googleSignIn,
   logout,
   login,
+  register,
 };

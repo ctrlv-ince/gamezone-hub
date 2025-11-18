@@ -128,10 +128,40 @@ const updateProfile = async (userId, profileData) => {
   }
 };
 
+const createUser = async (userData) => {
+  const { username, email, firebaseUid, password } = userData;
+  let user = await User.findOne({ email });
+
+  if (user) {
+    // User exists, update firebaseUid if it's not already set
+    if (!user.firebaseUid) {
+      user.firebaseUid = firebaseUid;
+    }
+    // If the user exists but doesn't have a password, set it
+    if (password && !user.password) {
+      user.password = password;
+    }
+    await user.save();
+  } else {
+    // User does not exist, create a new one
+    user = new User({
+      username,
+      email,
+      firebaseUid,
+      password,
+    });
+    await user.save();
+  }
+
+  const token = generateToken(user);
+  return { user, token };
+};
+
 module.exports = {
   getMe,
   updateProfile,
   login,
   generateToken,
   googleSignIn,
+  createUser,
 };

@@ -15,4 +15,9 @@ const login = async (credentials) => {
   return res.data;
 };
 
-export default { getMe, updateProfile, login };
+const register = async (userData) => {
+  const res = await api.post('/auth/register', userData);
+  return res.data;
+};
+
+export default { getMe, updateProfile, login, register };

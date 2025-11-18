@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -12,6 +12,8 @@ import {
 } from '@mui/material';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import authService from '../services/authService';
+import { UserContext } from '../context/UserContext';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -46,6 +48,7 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const Register = () => {
+  const { login } = useContext(UserContext);
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -57,6 +60,14 @@ const Register = () => {
         data.email,
         data.password
       );
+      const firebaseUser = userCredential.user;
+      const { user, token } = await authService.register({
+        username: data.username,
+        email: data.email,
+        firebaseUid: firebaseUser.uid,
+        password: data.password,
+      });
+      login(user, token);
       // TODO: Redirect user or show success message
     } catch (error) {
       console.error('Error registering:', error);
