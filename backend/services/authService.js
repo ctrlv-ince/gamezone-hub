@@ -133,7 +133,15 @@ const createUser = async (userData) => {
   let user = await User.findOne({ email });
 
   if (user) {
-    throw new Error('Email is already in use');
+    // User exists, update firebaseUid if it's not already set
+    if (!user.firebaseUid) {
+      user.firebaseUid = firebaseUid;
+    }
+    // If the user exists but doesn't have a password, set it
+    if (password && !user.password) {
+      user.password = password;
+    }
+    await user.save();
   } else {
     // User does not exist, create a new one
     const existingUser = await User.findOne({ username });
