@@ -18,6 +18,20 @@ const uploadImages = async (files) => {
   return imageUrls;
 };
 
+const uploadProfilePicture = async (file) => {
+  if (!file) {
+    throw new Error('No file uploaded.');
+  }
+
+  const result = await cloudinary.uploader.upload(file.path, {
+    folder: 'gamezone-hub/avatars',
+    resource_type: 'image',
+  });
+
+  return result.secure_url;
+};
+
 module.exports = {
   uploadImages,
+  uploadProfilePicture,
 };

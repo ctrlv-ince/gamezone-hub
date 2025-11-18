@@ -22,6 +22,7 @@ const SalesChart = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [salesData, setSalesData] = useState(null);
+  const [totalSales, setTotalSales] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const handleFilter = async () => {
@@ -32,11 +33,15 @@ const SalesChart = () => {
     setLoading(true);
     try {
       const data = await getSalesData(startDate, endDate);
-      const formattedData = data.map((item) => ({
-        date: new Date(item.date).toLocaleDateString(),
-        totalSales: item.totalSales,
-      }));
+      const formattedData = data.map((item) => {
+        return {
+          date: item.date,
+          totalSales: item.totalSales,
+        };
+      });
       setSalesData(formattedData);
+      const total = formattedData.reduce((acc, item) => acc + item.totalSales, 0);
+      setTotalSales(total);
     } catch (error) {
       console.error('Error fetching sales data:', error);
     } finally {
@@ -211,10 +216,18 @@ const SalesChart = () => {
             border: '1px solid rgba(139, 0, 255, 0.2)'
           }}
         >
+          <Box sx={{ mb: 2, textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+              Total Sales
+            </Typography>
+            <Typography variant="h4" sx={{ color: 'white', fontWeight: 700 }}>
+              ₱{totalSales.toFixed(2)}
+            </Typography>
+          </Box>
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={salesData}>
-              <CartesianGrid 
-                strokeDasharray="3 3" 
+              <CartesianGrid
+                strokeDasharray="3 3"
                 stroke="rgba(139, 0, 255, 0.2)"
               />
               <XAxis 

@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { UserContext } from '../context/UserContext';
 import authService from '../services/authService';
+import { uploadProfilePicture } from '../services/uploadService';
 
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
@@ -36,10 +37,26 @@ const UpdateProfilePage = () => {
     message: '',
     severity: 'success'
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '');
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files;
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
-      const updatedUser = await authService.updateProfile(data);
+      let avatarUrl = user.avatar;
+      if (avatarFile) {
+        const response = await uploadProfilePicture(avatarFile);
+        avatarUrl = response.url;
+      }
+
+      const updatedUser = await authService.updateProfile({ ...data, avatar: avatarUrl });
       setUser(updatedUser);
       setSnackbar({
         open: true,
@@ -119,9 +136,29 @@ const UpdateProfilePage = () => {
           <CardContent sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
               <Avatar
-                src={user?.avatar}
+                src={avatarPreview}
                 sx={{ width: 120, height: 120, border: '3px solid #8b00ff' }}
               />
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+              <Button
+                variant="contained"
+                component="label"
+                sx={{
+                  background: 'linear-gradient(135deg, #8b00ff 0%, #00d4ff 100%)',
+                  '&:hover': {
+                    boxShadow: '0 0 30px rgba(139, 0, 255, 0.6)',
+                  },
+                }}
+              >
+                Change Avatar
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                />
+              </Button>
             </Box>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box sx={{ mb: 3 }}>

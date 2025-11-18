@@ -15,6 +15,16 @@ export const getSalesData = async (startDate, endDate) => {
     throw error.response.data;
   }
 };
+
+export const getMonthlySalesData = async () => {
+  try {
+    const response = await api.get(`${API_URL}/sales/monthly`);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
 export const getAllOrders = async () => {
   try {
     const response = await api.get(`${API_URL}/all`);

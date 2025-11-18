@@ -72,23 +72,57 @@ const getOrderById = async (id) => {
 };
 
 const getSalesData = async (startDate, endDate) => {
+  const start = new Date(startDate);
+  start.setUTCHours(0, 0, 0, 0); // Set to beginning of the day UTC
+
+  const end = new Date(endDate);
+  end.setUTCHours(23, 59, 59, 999); // Set to end of the day UTC
+
   return await Order.aggregate([
     {
       $match: {
         createdAt: {
-          $gte: new Date(startDate),
-          $lte: new Date(endDate),
+          $gte: start,
+          $lte: end,
         },
       },
     },
     {
       $group: {
-        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'UTC' } },
         totalSales: { $sum: '$totalPrice' },
       },
     },
     {
       $sort: { _id: 1 },
+    },
+    {
+      $project: {
+        _id: 0,
+        date: '$_id',
+        totalSales: 1,
+      },
+    },
+  ]);
+};
+
+const getMonthlySalesData = async () => {
+  return await Order.aggregate([
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m', date: '$createdAt', timezone: 'UTC' } },
+        totalSales: { $sum: '$totalPrice' },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+    {
+      $project: {
+        _id: 0,
+        month: '$_id',
+        totalSales: 1,
+      },
     },
   ]);
 };
@@ -121,6 +155,7 @@ module.exports = {
   getOrders,
   getOrderById,
   getSalesData,
+  getMonthlySalesData,
   updateOrderStatus,
   getAllOrders,
 };

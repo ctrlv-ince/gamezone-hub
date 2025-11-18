@@ -40,6 +40,15 @@ const getSales = async (req, res) => {
   }
 };
 
+const getMonthlySales = async (req, res) => {
+  try {
+    const salesData = await orderService.getMonthlySalesData();
+    res.json(salesData);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const updateOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -68,6 +77,7 @@ module.exports = {
   getOrders,
   getOrderById,
   getSales,
+  getMonthlySales,
   updateOrderStatus,
   getAllOrders,
 };

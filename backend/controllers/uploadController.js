@@ -9,6 +9,16 @@ const uploadImages = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    const url = await uploadService.uploadProfilePicture(req.file);
+    res.status(200).json({ url });
+  } catch (error) {
+    res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
+  }
+};
+
 module.exports = {
   uploadImages,
+  uploadProfilePicture,
 };

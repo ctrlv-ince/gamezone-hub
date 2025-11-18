@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import SalesChart from '../../components/admin/SalesChart';
+import MonthlySalesChart from '../../components/admin/MonthlySalesChart';
 
 const AdminDashboardPage = () => {
 
@@ -151,6 +152,7 @@ const AdminDashboardPage = () => {
               </Typography>
             </Box>
             <SalesChart />
+            <MonthlySalesChart />
           </CardContent>
         </Card>
       </Container>
