@@ -10,23 +10,30 @@ import {
   Tooltip,
   Chip,
   Rating,
-  Avatar
+  Avatar,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReviewsIcon from '@mui/icons-material/Reviews';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 const ReviewManagementPage = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all'); // 'all', 'bad-words', 'clean'
 
   const fetchReviews = async () => {
     setLoading(true);
     try {
       const response = await getAllProducts();
       const products = response.products || [];
-      const allReviews = products.flatMap((product) =>
+      let allReviews = products.flatMap((product) =>
         product.reviews.map((review) => ({
           ...review,
           name: review.user?.username || review.name,
@@ -34,6 +41,14 @@ const ReviewManagementPage = () => {
           productId: product._id,
         }))
       );
+
+      // Apply filter
+      if (filter === 'bad-words') {
+        allReviews = allReviews.filter(review => review.hasBadWords);
+      } else if (filter === 'clean') {
+        allReviews = allReviews.filter(review => !review.hasBadWords);
+      }
+
       setReviews(allReviews);
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -44,7 +59,7 @@ const ReviewManagementPage = () => {
 
   useEffect(() => {
     fetchReviews();
-  }, []);
+  }, [filter]);
 
   const handleDelete = async (productId, reviewId) => {
     try {
@@ -150,17 +165,32 @@ const ReviewManagementPage = () => {
       width: 400,
       sortable: false,
       renderCell: (params) => (
-        <Tooltip title={params.value} arrow>
-          <Typography sx={{ 
-            color: 'rgba(255, 255, 255, 0.7)',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            fontSize: '0.9rem'
-          }}>
-            {params.value}
-          </Typography>
-        </Tooltip>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title={params.value} arrow>
+            <Typography sx={{
+              color: 'rgba(255, 255, 255, 0.7)',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: '0.9rem'
+            }}>
+              {params.value}
+            </Typography>
+          </Tooltip>
+          {params.row.hasBadWords && (
+            <Chip
+              label="Bad Words"
+              size="small"
+              sx={{
+                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                color: '#ef4444',
+                border: '1px solid rgba(239, 68, 68, 0.4)',
+                fontWeight: 700,
+                fontSize: '0.7rem'
+              }}
+            />
+          )}
+        </Box>
       )
     },
     {
@@ -232,6 +262,37 @@ const ReviewManagementPage = () => {
           >
             Manage and moderate product reviews
           </Typography>
+
+          {/* Filter Section */}
+          <Box sx={{ mt: 3, ml: { xs: 0, md: 5 } }}>
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>Filter Reviews</InputLabel>
+              <Select
+                value={filter}
+                label="Filter Reviews"
+                onChange={(e) => setFilter(e.target.value)}
+                sx={{
+                  color: 'white',
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(139, 0, 255, 0.3)',
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'rgba(139, 0, 255, 0.5)',
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#8b00ff',
+                  },
+                  '& .MuiSelect-icon': {
+                    color: 'rgba(255, 255, 255, 0.7)',
+                  }
+                }}
+              >
+                <MenuItem value="all">All Reviews</MenuItem>
+                <MenuItem value="bad-words">Bad Words</MenuItem>
+                <MenuItem value="clean">Clean Reviews</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </Box>
 
         <Box sx={{

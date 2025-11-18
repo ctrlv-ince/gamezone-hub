@@ -9,9 +9,17 @@ import {
   IconButton,
   Fade,
   Backdrop,
+  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import StarIcon from '@mui/icons-material/Star';
+
+
+
+
+
+
+
 
 const ReviewModal = ({ open, onClose, onSubmit, review }) => {
   const [rating, setRating] = useState(0);
@@ -27,7 +35,7 @@ const ReviewModal = ({ open, onClose, onSubmit, review }) => {
     }
   }, [review, open]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
       alert('Please select a rating');
       return;
@@ -185,10 +193,10 @@ const ReviewModal = ({ open, onClose, onSubmit, review }) => {
 
           {/* Comment Section */}
           <Box sx={{ mb: 3 }}>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: 'rgba(255, 255, 255, 0.7)', 
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.7)',
                 mb: 1.5,
                 fontWeight: 600,
                 textTransform: 'uppercase',

@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const Order = require('../models/Order');
+const { filterBadWords } = require('./filterService');
 
 const getProducts = async (filters) => {
   let query = {};
@@ -115,10 +116,12 @@ const createProductReview = async (
       throw new Error('Order not found');
     }
 
+    const cleanedComment = await filterBadWords(comment);
+
     const review = {
       name,
       rating: Number(rating),
-      comment,
+      comment: cleanedComment,
       user: user._id,
       order: orderId,
     };
@@ -171,8 +174,11 @@ const updateReview = async (
     throw new Error('User not authorized to update this review');
   }
 
+  // Check for bad words in the updated comment
+  const cleanedComment = await filterBadWords(comment);
+
   review.rating = rating;
-  review.comment = comment;
+  review.comment = cleanedComment;
   review.name = username;
 
   product.rating =

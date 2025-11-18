@@ -278,7 +278,7 @@ const OrderHistoryPage = () => {
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                       {order.orderItems?.map((item) => (
                         <Box
-                          key={item.product._id}
+                          key={item.product?._id || item._id}
                           sx={{
                             display: 'flex',
                             justifyContent: 'space-between',
@@ -292,8 +292,8 @@ const OrderHistoryPage = () => {
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box
                               component="img"
-                              src={item.product.images?.[0]?.url}
-                              alt={item.product.name}
+                              src={item.product?.images?.[0]?.url || '/placeholder-image.png'}
+                              alt={item.product?.name || 'Product'}
                               sx={{
                                 width: 50,
                                 height: 50,
@@ -310,7 +310,7 @@ const OrderHistoryPage = () => {
                                   fontSize: '0.95rem'
                                 }}
                               >
-                                {item.product.name}
+                                {item.product?.name || 'Unknown Product'}
                               </Typography>
                               <Typography
                                 sx={{
@@ -318,7 +318,7 @@ const OrderHistoryPage = () => {
                                   fontSize: '0.85rem'
                                 }}
                               >
-                                ₱{item.product.price.toFixed(2)} × {item.quantity}
+                                ₱{item.product?.price?.toFixed(2) || '0.00'} × {item.quantity}
                               </Typography>
                             </Box>
                           </Box>
@@ -331,9 +331,9 @@ const OrderHistoryPage = () => {
                                textAlign: 'right',
                              }}
                            >
-                             ₱{(item.product.price * item.quantity).toFixed(2)}
+                             ₱{((item.product?.price || 0) * item.quantity).toFixed(2)}
                            </Typography>
-                           {order.status === 'Completed' && (() => {
+                           {order.status === 'Completed' && item.product && (() => {
                               const userReview = user && item.product.reviews
                                 ? item.product.reviews.find((r) => r.user === user._id)
                                 : null;
