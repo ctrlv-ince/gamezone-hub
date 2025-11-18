@@ -33,6 +33,12 @@ const googleSignIn = async (req, res) => {
     res.json({ token, user });
   } catch (err) {
     console.error('Google sign-in error:', err.message);
+    if (
+      err.message === 'Username is already taken' ||
+      err.message === 'Email is already in use'
+    ) {
+      return res.status(400).json({ msg: err.message });
+    }
     if (err.code === 'auth/id-token-expired') {
       return res.status(401).json({ msg: 'Token expired' });
     }
@@ -76,6 +82,12 @@ const register = async (req, res) => {
     res.status(201).json({ user, token });
   } catch (err) {
     console.error(err.message);
+    if (
+      err.message === 'Username is already taken' ||
+      err.message === 'Email is already in use'
+    ) {
+      return res.status(400).json({ msg: err.message });
+    }
     res.status(500).send('Server Error');
   }
 };

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -10,7 +10,10 @@ import {
   TextField,
   Button,
   styled,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -55,6 +58,7 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(UserContext);
+  const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
@@ -163,12 +167,27 @@ const Login = () => {
                           fullWidth
                           name="password"
                           label="Password"
-                          type="password"
+                          type={showPassword ? 'text' : 'password'}
                           id="password"
                           autoComplete="current-password"
                           {...register('password')}
                           error={!!errors.password}
                           helperText={errors.password?.message}
+                          InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  aria-label="toggle password visibility"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  onMouseDown={(e) => e.preventDefault()}
+                                  edge="end"
+                                  sx={{ color: '#bbbbbb' }}
+                                >
+                                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                           InputLabelProps={{
                             style: { color: '#bbbbbb' },
                           }}
@@ -189,7 +208,8 @@ const Login = () => {
                             },
                             input: { color: '#ffffff' },
                           }}
-                        />            <AnimatedButton
+                        />
+            <AnimatedButton
               type="submit"
               fullWidth
               variant="contained"

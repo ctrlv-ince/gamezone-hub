@@ -14,7 +14,7 @@ const googleSignIn = async (idToken) => {
     let username = name || email.split('@');
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      username = `${username}_${Date.now()}`;
+      throw new Error('Username is already taken');
     }
     user = new User({
       email,
@@ -133,17 +133,13 @@ const createUser = async (userData) => {
   let user = await User.findOne({ email });
 
   if (user) {
-    // User exists, update firebaseUid if it's not already set
-    if (!user.firebaseUid) {
-      user.firebaseUid = firebaseUid;
-    }
-    // If the user exists but doesn't have a password, set it
-    if (password && !user.password) {
-      user.password = password;
-    }
-    await user.save();
+    throw new Error('Email is already in use');
   } else {
     // User does not exist, create a new one
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      throw new Error('Username is already taken');
+    }
     user = new User({
       username,
       email,
